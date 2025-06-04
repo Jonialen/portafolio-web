@@ -1,7 +1,7 @@
 import Phaser from 'phaser';
 import { createInteractiveObject } from '../objects/InteractiveObject';
-import { createRowAnimation } from '../utils/createRowAnimation';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
+import { setupAnimations } from '../animations/AnimationSetup';
 
 export class MainScene extends Phaser.Scene {
   private capas: Phaser.GameObjects.Image[] = [];
@@ -32,15 +32,9 @@ export class MainScene extends Phaser.Scene {
 
   create() {
     new ParallaxBackground(this, ['fondo1', 'fondo2', 'fondo3']);
+    setupAnimations(this);
 
-    // Crear animaciones del cofre
-    const tex = this.textures.get('cofre').getSourceImage();
-    const columnas = tex.width / 48;
-
-    createRowAnimation(this, 'cofre_idle', 'cofre', 0, columnas, 2);
-    createRowAnimation(this, 'cofre_hover', 'cofre', 1, columnas, 6, 0);
-
-    // Crear cofre interactivo
+    // Crear cofre
     createInteractiveObject({
       scene: this,
       x: 150,
@@ -53,9 +47,9 @@ export class MainScene extends Phaser.Scene {
       scale: 4,
       flipX: true,
       zoomOnHover: false,
-      zoomAmount: 1.2, // Zoom muy sutil
-      zoomDuration: 1000, // 1 segundo de duración
-      zoomEase: 'Sine.easeInOut', // Easing muy natural
+      zoomAmount: 1.2,
+      zoomDuration: 1000,
+      zoomEase: 'Sine.easeInOut',
     });
 
     console.log('MainScene create');

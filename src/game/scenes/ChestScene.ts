@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
+import { createChestAlignedGrid } from '../utils/gridUtils';
 
 export class ChestScene extends Phaser.Scene {
   constructor() {
@@ -10,6 +11,8 @@ export class ChestScene extends Phaser.Scene {
     this.load.image('fondo_back', '/assets/scenes/forest_light/back2.png');
     this.load.image('fondo_front', '/assets/scenes/forest_light/front2.png');
     this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
+
+    this.load.image('book_portfolio', '/assets/tools/book.png')
 
     this.load.image('chest_indor', '/assets/chest/generic_54.png');
   }
@@ -24,12 +27,11 @@ export class ChestScene extends Phaser.Scene {
       .image(width / 2, height - 200, 'chest_indor')
       .setOrigin(0.5, 1);
 
-    // Escalado como antes
     const tex = this.textures.get('chest_indor').getSourceImage();
     const scale = Math.min((width * 0.6) / tex.width, 4.5);
     chestInside.setScale(scale);
 
-    // Animación: “respiración” leve
+    // Animación: "respiración"
     this.tweens.add({
       targets: chestInside,
       scaleX: scale * 1.01,
@@ -42,6 +44,8 @@ export class ChestScene extends Phaser.Scene {
 
     // Fade in suave
     this.cameras.main.fadeIn(800, 0, 0, 0);
+
+    createChestAlignedGrid(this, chestInside, 9, 6);
 
     // Botón para volver (ejemplo simple con texto)
     const backText = this.add
