@@ -33,7 +33,7 @@ export class MainScene extends Phaser.Scene {
   create() {
     new ParallaxBackground(this, ['fondo1', 'fondo2', 'fondo3']);
     setupAnimations(this);
-
+    this.cameras.main.fadeIn(800, 0, 0, 0);
     // Crear cofre
     createInteractiveObject({
       scene: this,

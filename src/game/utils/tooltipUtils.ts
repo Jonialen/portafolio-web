@@ -3,7 +3,13 @@ import Phaser from 'phaser';
 let tooltipBox: Phaser.GameObjects.Rectangle;
 let tooltipText: Phaser.GameObjects.Text;
 
-export function showTooltip(scene: Phaser.Scene, x: number, y: number, title: string, desc: string) {
+export function showTooltip(
+  scene: Phaser.Scene,
+  x: number,
+  y: number,
+  title: string,
+  desc: string
+) {
   hideTooltip();
 
   const padding = 10;

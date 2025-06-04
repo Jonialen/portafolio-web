@@ -5,14 +5,7 @@ export const projects = [
     name: 'Juego interactivo',
     icon: 'book_portfolio', // reemplazar con sprite más adelante
     description: 'Portfolio gamificado con Phaser',
-    onClick: () => console.log('Click: Proyecto 1'),
+    onClick: () =>
+      window.open('https://github.com/Jonialen/portafolio-web.git', '_blank'),
   },
-  {
-    id: 'proj2',
-    name: 'Sitio web moderno',
-    icon: 'placeholder_item',
-    description: 'Sitio hecho en React + Vite',
-    onClick: () => console.log('Click: Proyecto 2'),
-  },
-  // Agrega más según necesites
 ];

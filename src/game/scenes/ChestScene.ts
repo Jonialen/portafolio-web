@@ -1,8 +1,10 @@
 import Phaser from 'phaser';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { createChestAlignedGrid } from '../utils/gridUtils';
+import { showCinematicTitle } from '../utils/cinematicTitle';
 
 export class ChestScene extends Phaser.Scene {
+  respirationTween!: Phaser.Tweens.Tween;
   constructor() {
     super({ key: 'ChestScene' });
   }
@@ -12,7 +14,7 @@ export class ChestScene extends Phaser.Scene {
     this.load.image('fondo_front', '/assets/scenes/forest_light/front2.png');
     this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
 
-    this.load.image('book_portfolio', '/assets/tools/book.png')
+    this.load.image('book_portfolio', '/assets/tools/book.png');
 
     this.load.image('chest_indor', '/assets/chest/generic_54.png');
   }
@@ -31,9 +33,16 @@ export class ChestScene extends Phaser.Scene {
     const scale = Math.min((width * 0.6) / tex.width, 4.5);
     chestInside.setScale(scale);
 
+    // Fade in suave
+    showCinematicTitle(this, 'Cofre de Proyectos');
+    this.cameras.main.fadeIn(800, 0, 0, 0);
+
+    const gridElements = createChestAlignedGrid(this, chestInside, 9, 6);
+    const allTargets = [chestInside, ...gridElements];
+
     // Animación: "respiración"
-    this.tweens.add({
-      targets: chestInside,
+    this.respirationTween = this.tweens.add({
+      targets: allTargets,
       scaleX: scale * 1.01,
       scaleY: scale * 1.01,
       duration: 2000,
@@ -41,11 +50,6 @@ export class ChestScene extends Phaser.Scene {
       repeat: -1,
       ease: 'Sine.easeInOut',
     });
-
-    // Fade in suave
-    this.cameras.main.fadeIn(800, 0, 0, 0);
-
-    createChestAlignedGrid(this, chestInside, 9, 6);
 
     // Botón para volver (ejemplo simple con texto)
     const backText = this.add
@@ -58,8 +62,9 @@ export class ChestScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true });
 
     backText.on('pointerdown', () => {
-      this.cameras.main.fadeOut(500, 0, 0, 0);
-      this.cameras.main.once('camerafadeoutcomplete', () => {
+      this.cameras.main.fadeOut(800, 0, 0, 0);
+
+      this.time.delayedCall(850, () => {
         this.scene.start('MainScene');
       });
     });
