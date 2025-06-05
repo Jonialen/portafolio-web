@@ -28,10 +28,15 @@ export class MainScene extends Phaser.Scene {
       frameWidth: 48,
       frameHeight: 32,
     });
+
+    this.load.spritesheet('backpack', '/assets/backpack/backpack_big.png', {
+      frameWidth: 16,
+      frameHeight: 16,
+    });
   }
 
   create() {
-    new ParallaxBackground(this, ['fondo1', 'fondo2', 'fondo3']);
+    const parallaxBg = new ParallaxBackground(this, ['fondo1', 'fondo2', 'fondo3']);
     setupAnimations(this);
     this.cameras.main.fadeIn(800, 0, 0, 0);
     // Crear cofre
@@ -50,6 +55,19 @@ export class MainScene extends Phaser.Scene {
       zoomAmount: 1.2,
       zoomDuration: 1000,
       zoomEase: 'Sine.easeInOut',
+    });
+
+    createInteractiveObject({
+      scene: this,
+      x: 500,
+      y: 900,
+      spriteKey: 'backpack',
+      idleAnim: '', // <- sin animaciones
+      hoverAnim: '',
+      infoText: 'Mi Mochila de Recursos',
+      targetScene: 'BackpackScene', // o la que definas
+      scale: 4,
+      zoomOnHover: false,
     });
 
     console.log('MainScene create');
