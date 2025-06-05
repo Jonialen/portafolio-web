@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
 import { MainScene } from '../game/scenes/MainScene';
 import { ChestScene } from '../game/scenes/ChestScene';
+import { BackpackScene } from '../game/scenes/BackpackScene';
 
 export function GameCanvas() {
   const ref = useRef<HTMLDivElement>(null);
@@ -12,7 +13,7 @@ export function GameCanvas() {
       width: 1920,
       height: 1080,
       parent: ref.current!,
-      scene: [MainScene, ChestScene],
+      scene: [MainScene, ChestScene, BackpackScene],
       pixelArt: true,
       scale: {
         mode: Phaser.Scale.FIT,

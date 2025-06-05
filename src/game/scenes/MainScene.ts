@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { createInteractiveObject } from '../objects/InteractiveObject';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { setupAnimations } from '../animations/AnimationSetup';
+import { createBundleInteractive } from '../objects/createBundleInteractive';
 
 export class MainScene extends Phaser.Scene {
   private capas: Phaser.GameObjects.Image[] = [];
@@ -33,17 +34,31 @@ export class MainScene extends Phaser.Scene {
       frameWidth: 16,
       frameHeight: 16,
     });
+
+    this.load.spritesheet('bundleOpen', '/assets/bundle/bundleOpen.png', {
+      frameWidth: 160,
+      frameHeight: 160,
+    });
+
+    this.load.spritesheet('bundleClose', '/assets/bundle/bundleClose.png', {
+      frameWidth: 160,
+      frameHeight: 160,
+    });
   }
 
   create() {
-    const parallaxBg = new ParallaxBackground(this, ['fondo1', 'fondo2', 'fondo3']);
+    const parallaxBg = new ParallaxBackground(this, [
+      'fondo1',
+      'fondo2',
+      'fondo3',
+    ]);
     setupAnimations(this);
     this.cameras.main.fadeIn(800, 0, 0, 0);
     // Crear cofre
     createInteractiveObject({
       scene: this,
       x: 150,
-      y: 900,
+      y: 950,
       spriteKey: 'cofre',
       idleAnim: 'cofre_idle',
       hoverAnim: 'cofre_hover',
@@ -59,14 +74,28 @@ export class MainScene extends Phaser.Scene {
 
     createInteractiveObject({
       scene: this,
-      x: 500,
-      y: 900,
+      x: 600,
+      y: 950,
       spriteKey: 'backpack',
-      idleAnim: '', // <- sin animaciones
+      idleAnim: '',
       hoverAnim: '',
-      infoText: 'Mi Mochila de Recursos',
-      targetScene: 'BackpackScene', // o la que definas
+      infoText: 'Mi Mochila personal',
+      targetScene: 'BackpackScene',
       scale: 4,
+      zoomOnHover: false,
+    });
+
+    createInteractiveObject({
+      scene: this,
+      x: 1000,
+      y: 950,
+      spriteKey: 'bundleClose',
+      altSpriteKey: 'bundleOpen',
+      idleAnim: '',
+      hoverAnim: '',
+      infoText: 'Recursos',
+      targetScene: 'BackpackScene',
+      scale: 2 / 5,
       zoomOnHover: false,
     });
 

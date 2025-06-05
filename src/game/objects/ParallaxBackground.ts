@@ -5,21 +5,18 @@ export class ParallaxBackground {
   constructor(scene: Phaser.Scene, layerKeys: string[]) {
     this.scene = scene;
     const { width, height } = scene.cameras.main;
-    
+
     layerKeys.forEach((key, index) => {
       const img = scene.add.image(0, 0, key).setOrigin(0);
       const tex = scene.textures.get(key).getSourceImage();
       const scale = Math.max(width / tex.width, height / tex.height);
-      
+
       img.setScale(scale);
-      
-      // IMPORTANTE: Configurar depth para que el fondo esté atrás
-      img.setDepth(index - 10); // Depths negativos para asegurar que estén atrás
-      
-      console.log(`Capa ${key} creada con depth: ${index - 10}`);
-      
+
+      img.setDepth(index - 10);
+
       this.capas.push(img);
-      
+
       // Animación parallax básica
       scene.tweens.add({
         targets: img,
@@ -40,7 +37,9 @@ export class ParallaxBackground {
   setLayerDepths(startDepth: number = -10) {
     this.capas.forEach((capa, index) => {
       capa.setDepth(startDepth + index);
-      console.log(`Capa ${capa.texture.key} depth ajustado a: ${startDepth + index}`);
+      console.log(
+        `Capa ${capa.texture.key} depth ajustado a: ${startDepth + index}`
+      );
     });
   }
 }
