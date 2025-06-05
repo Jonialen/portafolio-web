@@ -1,10 +1,36 @@
-export function handlePointerOver(ctx: { sprite: any; altSprite: any; shadow: any; label: any; config: any; breathingTween: any; floatingTween: any; shadowTween: any; originalCameraX: any; originalCameraY: any; originalZoom: any; scene: any; x: any; y: any; state: any; }) {
+export function handlePointerOver(ctx: {
+  sprite: any;
+  altSprite: any;
+  shadow: any;
+  label: any;
+  config: any;
+  breathingTween: any;
+  floatingTween: any;
+  shadowTween: any;
+  originalCameraX: any;
+  originalCameraY: any;
+  originalZoom: any;
+  scene: any;
+  x: any;
+  y: any;
+  state: any;
+}) {
   const {
-    sprite, altSprite, shadow, label, config,
-    breathingTween, floatingTween, shadowTween,
-    originalCameraX, originalCameraY, originalZoom,
-    scene, x, y,
-    state
+    sprite,
+    altSprite,
+    shadow,
+    label,
+    config,
+    breathingTween,
+    floatingTween,
+    shadowTween,
+    originalCameraX,
+    originalCameraY,
+    originalZoom,
+    scene,
+    x,
+    y,
+    state,
   } = ctx;
 
   if (state.isHovering) return;
@@ -50,7 +76,7 @@ export function handlePointerOver(ctx: { sprite: any; altSprite: any; shadow: an
       zoom: config.zoomAmount,
       duration: config.zoomDuration,
       ease: config.zoomEase,
-      onComplete: () => state.currentZoomTween = null,
+      onComplete: () => (state.currentZoomTween = null),
     });
   }
 }

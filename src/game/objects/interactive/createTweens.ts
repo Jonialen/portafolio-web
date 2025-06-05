@@ -1,4 +1,11 @@
-export function createLoopTweens(scene: Phaser.Scene, sprite: { y: any; }, shadow: { y: any; }, y: number, showPosY: any, scale: number) {
+export function createLoopTweens(
+  scene: Phaser.Scene,
+  sprite: { y: any },
+  shadow: { y: any },
+  y: number,
+  showPosY: any,
+  scale: number
+) {
   const shadowTween = scene.tweens.add({
     targets: shadow,
     scaleX: 1.01,

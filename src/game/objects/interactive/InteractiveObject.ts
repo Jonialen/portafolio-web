@@ -8,10 +8,7 @@ import { handlePointerDown } from './handlers/handlePointerDown';
 import type { InteractiveObjectConfig } from './types';
 
 export function createInteractiveObject(config: InteractiveObjectConfig) {
-  const {
-    scene, x, y, scale = 1,
-    idleAnim, hoverAnim, targetScene
-  } = config;
+  const { scene, x, y, scale = 1, idleAnim, hoverAnim, targetScene } = config;
 
   const { sprite, altSprite } = createSprites(config);
 
@@ -25,10 +22,23 @@ export function createInteractiveObject(config: InteractiveObjectConfig) {
   const shadowWidth = spriteWidth * 1.4;
   const shadowHeight = 10 * scale;
 
-  const shadow = createShadow(scene, x, y + showPosY, shadowWidth, shadowHeight);
+  const shadow = createShadow(
+    scene,
+    x,
+    y + showPosY,
+    shadowWidth,
+    shadowHeight
+  );
   const label = createLabel(scene, x, y, config.infoText);
 
-  const { shadowTween, breathingTween, floatingTween } = createLoopTweens(scene, sprite, shadow, y, showPosY, scale);
+  const { shadowTween, breathingTween, floatingTween } = createLoopTweens(
+    scene,
+    sprite,
+    shadow,
+    y,
+    showPosY,
+    scale
+  );
 
   if (idleAnim && sprite.anims) sprite.play(idleAnim);
 
@@ -43,11 +53,23 @@ export function createInteractiveObject(config: InteractiveObjectConfig) {
   };
 
   const ctx = {
-    scene, x, y, sprite, altSprite, shadow, label, config,
-    breathingTween, floatingTween, shadowTween,
-    originalCameraX, originalCameraY, originalZoom,
+    scene,
+    x,
+    y,
+    sprite,
+    altSprite,
+    shadow,
+    label,
+    config,
+    breathingTween,
+    floatingTween,
+    shadowTween,
+    originalCameraX,
+    originalCameraY,
+    originalZoom,
     state,
-    shadowWidth, shadowHeight
+    shadowWidth,
+    shadowHeight,
   };
 
   sprite.on('pointerover', () => handlePointerOver(ctx));
@@ -61,7 +83,12 @@ export function createInteractiveObject(config: InteractiveObjectConfig) {
   }
 
   sprite.on('animationcomplete', (anim: Phaser.Animations.Animation) => {
-    if (hoverAnim && anim.key === hoverAnim && state.isPlayingReverse && idleAnim) {
+    if (
+      hoverAnim &&
+      anim.key === hoverAnim &&
+      state.isPlayingReverse &&
+      idleAnim
+    ) {
       state.isPlayingReverse = false;
       sprite.play(idleAnim);
     }
