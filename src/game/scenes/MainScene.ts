@@ -1,8 +1,7 @@
 import Phaser from 'phaser';
-import { createInteractiveObject } from '../objects/InteractiveObject';
+import { createInteractiveObject } from '../objects/interactive/InteractiveObject';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { setupAnimations } from '../animations/AnimationSetup';
-import { createBundleInteractive } from '../objects/createBundleInteractive';
 
 export class MainScene extends Phaser.Scene {
   private capas: Phaser.GameObjects.Image[] = [];
