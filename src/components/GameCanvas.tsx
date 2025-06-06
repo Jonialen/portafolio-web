@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import { MainScene } from '../game/scenes/MainScene';
 import { ChestScene } from '../game/scenes/ChestScene';
 import { BackpackScene } from '../game/scenes/BackpackScene';
+import { BundleScene } from '../game/scenes/BundleScene';
 
 export function GameCanvas() {
   const ref = useRef<HTMLDivElement>(null);
@@ -13,7 +14,7 @@ export function GameCanvas() {
       width: 1920,
       height: 1080,
       parent: ref.current!,
-      scene: [MainScene, ChestScene, BackpackScene],
+      scene: [MainScene, ChestScene, BackpackScene, BundleScene],
       pixelArt: true,
       scale: {
         mode: Phaser.Scale.FIT,

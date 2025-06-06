@@ -1,16 +1,24 @@
 import Phaser from 'phaser';
-import { projects } from '../data/projects';
 import { setupIconInteractions } from './iconInteractions';
 
-export function createChestAlignedGrid(
+export function createAlignedGrid(
   scene: Phaser.Scene,
-  chestImage: Phaser.GameObjects.Image,
+  Image: Phaser.GameObjects.Image,
+  items: {
+    id: string;
+    name: string;
+    icon: string;
+    description: string;
+    onClick: () => void;
+  }[],
   spriteCols = 9,
   spriteRows = 6,
   cellSizeSprite = 16,
-  paddingSprite = 2
+  paddingSprite = 2,
+  yOffset = -20,
+
 ): Phaser.GameObjects.GameObject[] {
-  const scale = chestImage.scale;
+  const scale = Image.scale;
   const cellSize = cellSizeSprite * scale;
   const padding = paddingSprite * scale;
 
@@ -22,8 +30,8 @@ export function createChestAlignedGrid(
   const displayWidth = totalWidth * scale;
   const displayHeight = totalHeight * scale;
 
-  const startX = chestImage.x - displayWidth / 2;
-  const startY = chestImage.y - displayHeight - 20 * scale;
+  const startX = Image.x - displayWidth / 2;
+  const startY = Image.y - displayHeight + yOffset * scale;
 
   const gridElements: Phaser.GameObjects.GameObject[] = [];
   let i = 0;
@@ -33,7 +41,7 @@ export function createChestAlignedGrid(
       const x = startX + col * (cellSize + padding) + cellSize / 2;
       const y = startY + row * (cellSize + padding) + cellSize / 2;
 
-      const project = projects[i];
+      const project = items[i];
       if (project) {
         // Fondo del slot
         const bg = scene.add
@@ -43,7 +51,7 @@ export function createChestAlignedGrid(
 
         const icon = scene.add
           .image(x, y, project.icon)
-          .setScale(scale * 0.9)
+          .setDisplaySize(cellSize * 0.85, cellSize * 0.85)
           .setOrigin(0.5)
           .setInteractive({ useHandCursor: true });
 

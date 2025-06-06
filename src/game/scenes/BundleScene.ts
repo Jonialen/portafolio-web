@@ -2,12 +2,12 @@ import Phaser from 'phaser';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { createAlignedGrid } from '../utils/gridUtils';
 import { showCinematicTitle } from '../utils/cinematicTitle';
-import { projects } from '../data/projects';
+import { skills } from '../data/skills';
 
-export class ChestScene extends Phaser.Scene {
+export class BundleScene extends Phaser.Scene {
   respirationTween!: Phaser.Tweens.Tween;
   constructor() {
-    super({ key: 'ChestScene' });
+    super({ key: 'BundleScene' });
   }
 
   preload() {
@@ -15,9 +15,9 @@ export class ChestScene extends Phaser.Scene {
     this.load.image('fondo_front', '/assets/scenes/forest_light/front2.png');
     this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
 
-    this.load.image('book_portfolio', '/assets/tools/book.png');
+    this.load.image('react', '/assets/skills/react.png');
 
-    this.load.image('chest_indor', '/assets/chest/generic_54.png');
+    this.load.image('bundle_Inside', '/assets/bundle/leather_expand.png');
   }
 
   create() {
@@ -26,26 +26,29 @@ export class ChestScene extends Phaser.Scene {
     new ParallaxBackground(this, ['fondo_back', 'fondo_middle', 'fondo_front']);
 
     // Agregar imagen del interior del cofre
-    const chestInside = this.add
-      .image(width / 2, height - 200, 'chest_indor')
+    const bundleInside = this.add
+      .image(width / 2, height - 200, 'bundle_Inside')
       .setOrigin(0.5, 1);
 
-    const tex = this.textures.get('chest_indor').getSourceImage();
-    const scale = Math.min((width * 0.6) / tex.width, 4.5);
-    chestInside.setScale(scale);
+    const tex = this.textures.get('bundle_Inside').getSourceImage();
+    const scale = Math.min((width * 0.6) / tex.width, 10);
+    bundleInside.setScale(scale);
 
     // Fade in suave
-    showCinematicTitle(this, 'Cofre de Proyectos');
+    showCinematicTitle(this, 'Saco de habilidades');
     this.cameras.main.fadeIn(800, 0, 0, 0);
 
     const gridElements = createAlignedGrid(
       this,
-      chestInside,
-      projects,
-      9,
-      6
+      bundleInside,
+      skills,
+      4,
+      4,
+      8,
+      2,
+      -15,
     );
-    const allTargets = [chestInside, ...gridElements];
+    const allTargets = [bundleInside, ...gridElements];
 
     // Animación: "respiración"
     this.respirationTween = this.tweens.add({

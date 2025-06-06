@@ -93,7 +93,7 @@ export class MainScene extends Phaser.Scene {
       idleAnim: '',
       hoverAnim: '',
       infoText: 'Recursos',
-      targetScene: 'BackpackScene',
+      targetScene: 'BundleScene',
       scale: 2 / 5,
       zoomOnHover: false,
     });
