@@ -4,8 +4,6 @@ import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { setupAnimations } from '../animations/AnimationSetup';
 
 export class MainScene extends Phaser.Scene {
-  private capas: Phaser.GameObjects.Image[] = [];
-
   constructor() {
     super({ key: 'MainScene' });
   }
@@ -40,17 +38,22 @@ export class MainScene extends Phaser.Scene {
     });
 
     this.load.spritesheet('bundleClose', '/assets/bundle/bundleClose.png', {
-      frameWidth: 160,
-      frameHeight: 160,
+      frameWidth: 120,
+      frameHeight: 140,
     });
+
+    this.load.spritesheet(
+      'cristalBall',
+      '/assets/crystallball/Bola_de_cristal.png',
+      {
+        frameWidth: 32,
+        frameHeight: 32,
+      }
+    );
   }
 
   create() {
-    const parallaxBg = new ParallaxBackground(this, [
-      'fondo1',
-      'fondo2',
-      'fondo3',
-    ]);
+    new ParallaxBackground(this, ['fondo1', 'fondo2', 'fondo3']);
     setupAnimations(this);
     this.cameras.main.fadeIn(800, 0, 0, 0);
     // Crear cofre
@@ -92,9 +95,23 @@ export class MainScene extends Phaser.Scene {
       altSpriteKey: 'bundleOpen',
       idleAnim: '',
       hoverAnim: '',
-      infoText: 'Recursos',
+      infoText: 'Skills',
       targetScene: 'BundleScene',
       scale: 2 / 5,
+      zoomOnHover: false,
+    });
+
+    createInteractiveObject({
+      scene: this,
+      x: 1450,
+      y: 910,
+      spriteKey: 'cristalBall',
+      altSpriteKey: '',
+      idleAnim: '',
+      hoverAnim: '',
+      infoText: 'Contact Me',
+      targetScene: 'CrystalBallScene',
+      scale: 2,
       zoomOnHover: false,
     });
 

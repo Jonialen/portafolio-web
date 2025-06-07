@@ -38,13 +38,7 @@ export class ChestScene extends Phaser.Scene {
     showCinematicTitle(this, 'Cofre de Proyectos');
     this.cameras.main.fadeIn(800, 0, 0, 0);
 
-    const gridElements = createAlignedGrid(
-      this,
-      chestInside,
-      projects,
-      9,
-      6
-    );
+    const gridElements = createAlignedGrid(this, chestInside, projects, 9, 6);
     const allTargets = [chestInside, ...gridElements];
 
     // Animación: "respiración"

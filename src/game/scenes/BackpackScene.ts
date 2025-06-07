@@ -8,16 +8,6 @@ import { diaryPages } from '../data/diaryPages';
 
 export class BackpackScene extends Phaser.Scene {
   private diaryBook!: DiaryBook;
-  private isInitialized = false;
-
-  private readonly pages = [
-    `Querido diario:\n\nHoy encontré una mochila\nentre los árboles.\nDentro había este diario.`,
-    `Lo abrí con cuidado...\ny decidí escribir mis aventuras\naquí desde hoy.`,
-    `Este bosque tiene algo\nespecial. Los árboles murmuran\nhistorias olvidadas.`,
-    `¿Y si esta mochila\npertenecía a alguien como yo?\n¿A dónde fue?\n¿Qué buscaba?`,
-    `Las hojas crujen bajo mis pies\ny siento que cada paso\nme acerca a un secreto.`,
-    `Mañana exploraré más profundo.\nEste diario será testigo\nde todo lo que descubra.`,
-  ];
 
   constructor() {
     super({ key: 'BackpackScene' });

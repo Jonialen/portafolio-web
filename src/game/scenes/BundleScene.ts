@@ -46,7 +46,7 @@ export class BundleScene extends Phaser.Scene {
       4,
       8,
       2,
-      -15,
+      -15
     );
     const allTargets = [bundleInside, ...gridElements];
 

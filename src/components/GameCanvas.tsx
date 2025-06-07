@@ -4,6 +4,7 @@ import { MainScene } from '../game/scenes/MainScene';
 import { ChestScene } from '../game/scenes/ChestScene';
 import { BackpackScene } from '../game/scenes/BackpackScene';
 import { BundleScene } from '../game/scenes/BundleScene';
+import { CrystalBallScene } from '../game/scenes/CrystalBallScene';
 
 export function GameCanvas() {
   const ref = useRef<HTMLDivElement>(null);
@@ -14,7 +15,13 @@ export function GameCanvas() {
       width: 1920,
       height: 1080,
       parent: ref.current!,
-      scene: [MainScene, ChestScene, BackpackScene, BundleScene],
+      scene: [
+        MainScene,
+        ChestScene,
+        BackpackScene,
+        BundleScene,
+        CrystalBallScene,
+      ],
       pixelArt: true,
       scale: {
         mode: Phaser.Scale.FIT,

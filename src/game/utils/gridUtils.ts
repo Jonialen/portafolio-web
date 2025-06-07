@@ -15,8 +15,7 @@ export function createAlignedGrid(
   spriteRows = 6,
   cellSizeSprite = 16,
   paddingSprite = 2,
-  yOffset = -20,
-
+  yOffset = -20
 ): Phaser.GameObjects.GameObject[] {
   const scale = Image.scale;
   const cellSize = cellSizeSprite * scale;

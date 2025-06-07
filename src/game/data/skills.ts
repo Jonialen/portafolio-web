@@ -7,5 +7,4 @@ export const skills = [
     description: 'peneeeee',
     onClick: () => {},
   },
-  
 ];
