@@ -26,6 +26,10 @@ export class ChestScene extends Phaser.Scene {
     );
 
     this.load.image('book_portfolio', '/assets/tools/book.png');
+    this.load.image('fruta', '/assets/tools/fruta.png');
+    this.load.image('glowStone', '/assets/tools/glowStone.png');
+    this.load.image('perl', '/assets/tools/perl.png');
+    this.load.image('sword', '/assets/tools/sword.png');
 
     this.load.image('chest_indor', '/assets/chest/generic_54.png');
 
