@@ -1,4 +1,3 @@
-// utils/FontLoader.ts
 export class FontLoader {
   private static loadedFonts = new Set<string>();
 
@@ -6,19 +5,17 @@ export class FontLoader {
     fontName: string,
     scene: Phaser.Scene
   ): Promise<void> {
-    // Si ya está cargada, no hacer nada
+
     if (this.loadedFonts.has(fontName)) {
       return Promise.resolve();
     }
 
     return new Promise((resolve) => {
-      // Crear el link para cargar la fuente
       const link = document.createElement('link');
       link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(' ', '+')}:wght@400;700&display=swap`;
       link.rel = 'stylesheet';
       document.head.appendChild(link);
 
-      // Verificar si la fuente se ha cargado
       this.checkFontLoaded(fontName, scene, resolve);
     });
   }
@@ -28,7 +25,6 @@ export class FontLoader {
     scene: Phaser.Scene,
     callback: () => void
   ) {
-    // Crear un elemento temporal para probar la fuente
     const testElement = document.createElement('div');
     testElement.style.fontFamily = `${fontName}, Arial`;
     testElement.style.fontSize = '24px';
@@ -44,7 +40,6 @@ export class FontLoader {
     const checkFont = () => {
       attempts++;
 
-      // Verificar si la fuente está disponible
       const computedStyle = window.getComputedStyle(testElement);
       const fontAvailable =
         computedStyle.fontFamily.includes(fontName) ||
@@ -60,15 +55,13 @@ export class FontLoader {
           console.warn(`Font ${fontName} failed to load, using fallback`);
         }
 
-        // Esperar un poco más para asegurar que la fuente esté completamente cargada
         scene.time.delayedCall(100, callback);
       } else {
-        // Reintentar después de 100ms
+
         scene.time.delayedCall(100, checkFont);
       }
     };
 
-    // Empezar a verificar después de 300ms
     scene.time.delayedCall(300, checkFont);
   }
 

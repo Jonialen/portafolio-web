@@ -56,7 +56,6 @@ export function setupIconInteractions({
   });
 
   icon.on('pointerdown', () => {
-    // Mini bump al hacer clic
     scene.tweens.add({
       targets: icon,
       scale: originalScale * clickScale,

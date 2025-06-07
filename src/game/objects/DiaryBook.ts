@@ -1,4 +1,3 @@
-// objects/DiaryBook.ts
 export class DiaryBook {
   private scene: Phaser.Scene;
   private bookPage!: Phaser.GameObjects.Image;
@@ -20,7 +19,6 @@ export class DiaryBook {
   private createBook() {
     const { width, height } = this.scene.cameras.main;
 
-    // Crear la página del libro
     this.bookPage = this.scene.add
       .image(width / 2, height - 200, 'book_page')
       .setOrigin(0.5, 1);
@@ -29,23 +27,25 @@ export class DiaryBook {
     this.scale = Math.min((width * 0.6) / tex.width, 4.5);
     this.bookPage.setScale(this.scale);
 
-    const marginX = tex.width * this.scale * 0.05;
+    const marginX = tex.width * this.scale * 0.1;
     const marginY = tex.height * this.scale * 0.07;
+
+    const availableTextWidth = tex.width * this.scale - marginX * 2;
 
     this.diaryText = this.scene.add
       .text(
-        this.bookPage.x - (tex.width * this.scale) / 2 + marginX,
+        this.bookPage.x - (tex.width * this.scale) / 2 + marginX * 0.5,
         this.bookPage.y - tex.height * this.scale + marginY,
         '',
         {
           fontFamily: '"Shadows Into Light", cursive, Georgia, serif',
-          fontSize: '20px',
+          fontSize: '30px',
           color: '#3e2f1c',
-          wordWrap: { width: tex.width * this.scale - marginX * 2 },
+          wordWrap: { width: availableTextWidth },
           align: 'left',
         }
       )
-      .setOrigin(-0.1, 0) //alinear el área del libro
+      .setOrigin(-0.1, 0)
       .setDepth(10);
 
     this.createNavigationButtons();
@@ -56,7 +56,6 @@ export class DiaryBook {
   private createNavigationButtons() {
     const tex = this.scene.textures.get('book_page').getSourceImage();
 
-    // Botón siguiente
     this.nextButton = this.scene.add
       .text(
         this.bookPage.x + tex.width * this.scale * 0.3,
@@ -88,7 +87,6 @@ export class DiaryBook {
       this.nextButton.setAlpha(0.7);
     });
 
-    // Botón anterior
     this.prevButton = this.scene.add
       .text(
         this.bookPage.x - tex.width * this.scale * 0.3,
@@ -136,7 +134,6 @@ export class DiaryBook {
   }
 
   private updateButtonVisibility() {
-    // Mostrar/ocultar botones según la página actual
     this.prevButton.setVisible(this.currentPageIndex > 0);
     this.nextButton.setVisible(this.currentPageIndex < this.pages.length - 1);
   }
@@ -152,10 +149,8 @@ export class DiaryBook {
       duration: 300,
       ease: 'Power2.easeOut',
       onComplete: () => {
-        // Limpiar completamente el texto antes de establecer el nuevo
         this.diaryText.setText('');
 
-        // Esperar un frame para asegurar que se renderice vacío
         this.scene.time.delayedCall(16, () => {
           this.diaryText.setText(this.pages[index]);
           this.currentPageIndex = index;

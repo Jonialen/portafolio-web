@@ -17,7 +17,6 @@ export class ParallaxBackground {
 
       this.capas.push(img);
 
-      // Animación parallax básica
       scene.tweens.add({
         targets: img,
         x: '+=5',
@@ -33,7 +32,6 @@ export class ParallaxBackground {
     return this.capas;
   }
 
-  // Método para ajustar depths si es necesario
   setLayerDepths(startDepth: number = -10) {
     this.capas.forEach((capa, index) => {
       capa.setDepth(startDepth + index);

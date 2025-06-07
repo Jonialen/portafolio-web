@@ -14,15 +14,22 @@ export class BackpackScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('fondo_back', '/assets/scenes/forest_light/back2.png');
-    this.load.image('fondo_front', '/assets/scenes/forest_light/front2.png');
-    this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
+    // this.load.image('fondo_back', '/assets/scenes/forest_light/back2.png');
+    // this.load.image('fondo_front', '/assets/scenes/forest_light/front2.png');
+    // this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
+
+    this.load.image('fondo_back2', '/assets/scenes/forest_dark/backDark.png');
+    this.load.image('fondo_front2', '/assets/scenes/forest_dark/frontDark.png');
+    this.load.image(
+      'fondo_middle2',
+      '/assets/scenes/forest_dark/middleDark.png'
+    );
+
     this.load.image('book_page', '/assets/book/page.png');
   }
 
   async create() {
     try {
-      // Cargar la fuente primero
       await FontLoader.loadGoogleFont('Shadows Into Light', this);
       this.initScene();
     } catch (error) {
@@ -32,8 +39,12 @@ export class BackpackScene extends Phaser.Scene {
   }
 
   private initScene() {
-    // parallax
-    new ParallaxBackground(this, ['fondo_back', 'fondo_middle', 'fondo_front']);
+    // new ParallaxBackground(this, ['fondo_back', 'fondo_middle', 'fondo_front']);
+    new ParallaxBackground(this, [
+      'fondo_back2',
+      'fondo_middle2',
+      'fondo_front2',
+    ]);
 
     this.cameras.main.fadeIn(800, 0, 0, 0);
     showCinematicTitle(this, 'Diario Personal');
@@ -59,7 +70,6 @@ export class BackpackScene extends Phaser.Scene {
       .setAlpha(0.7)
       .setDepth(100);
 
-    // Efectos hover
     backText.on('pointerover', () => {
       this.tweens.add({
         targets: backText,
@@ -84,7 +94,6 @@ export class BackpackScene extends Phaser.Scene {
       this.exitScene();
     });
 
-    // También crear un botón de texto más tradicional
     const exitButton = this.add
       .text(width - 180, height - 60, 'Cerrar Diario', {
         fontSize: '24px',

@@ -3,13 +3,11 @@ import Phaser from 'phaser';
 export function showCinematicTitle(scene: Phaser.Scene, title: string) {
   const { width, height } = scene.cameras.main;
 
-  // Fondo oscuro (ya visible)
   const overlay = scene.add
     .rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
     .setDepth(1000)
-    .setAlpha(1); // Ya aparece
+    .setAlpha(1); 
 
-  // Texto del título (también visible desde el inicio)
   const titleText = scene.add
     .text(width / 2, height / 2, title, {
       fontSize: '48px',
@@ -20,9 +18,8 @@ export function showCinematicTitle(scene: Phaser.Scene, title: string) {
     })
     .setOrigin(0.5)
     .setDepth(1001)
-    .setAlpha(1); // Ya aparece
+    .setAlpha(1);
 
-  // Fade out conjunto
   scene.time.delayedCall(1200, () => {
     scene.tweens.add({
       targets: [overlay, titleText],

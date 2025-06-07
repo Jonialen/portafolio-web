@@ -42,7 +42,6 @@ export function createAlignedGrid(
 
       const project = items[i];
       if (project) {
-        // Fondo del slot
         const bg = scene.add
           .rectangle(x, y, cellSize, cellSize, 0x000000, 0.2)
           .setStrokeStyle(1, 0xffffff, 0.1)

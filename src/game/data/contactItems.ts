@@ -1,4 +1,3 @@
-// contactItems.ts
 export const contactItems = [
   {
     icon: 'email_icon',

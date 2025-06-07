@@ -13,9 +13,17 @@ export class CrystalBallScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image('fondo_back', '/assets/scenes/forest_light/back2.png');
-    this.load.image('fondo_front', '/assets/scenes/forest_light/front2.png');
-    this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
+    // this.load.image('fondo_back', '/assets/scenes/forest_light/back2.png');
+    // this.load.image('fondo_front', '/assets/scenes/forest_light/front2.png');
+    // this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
+
+    this.load.image('fondo_back2', '/assets/scenes/forest_dark/backDark.png');
+    this.load.image('fondo_front2', '/assets/scenes/forest_dark/frontDark.png');
+    this.load.image(
+      'fondo_middle2',
+      '/assets/scenes/forest_dark/middleDark.png'
+    );
+
     this.load.image(
       'cristal_inside',
       '/assets/crystallball/Bola_de_cristal_inside.png'
@@ -24,14 +32,17 @@ export class CrystalBallScene extends Phaser.Scene {
     this.load.image('email_icon', '/assets/icons/mail.png');
     this.load.image('linkedin_icon', '/assets/icons/linkedin.png');
     this.load.image('cv_icon', '/assets/icons/cv.png');
-    this.load.image('arrow_left', '/assets/ui/arrow_left.png');
-    this.load.image('arrow_right', '/assets/ui/arrow_right.png');
   }
 
   create() {
     const { width, height } = this.cameras.main;
 
-    new ParallaxBackground(this, ['fondo_back', 'fondo_middle', 'fondo_front']);
+    // new ParallaxBackground(this, ['fondo_back', 'fondo_middle', 'fondo_front']);
+    new ParallaxBackground(this, [
+      'fondo_back2',
+      'fondo_middle2',
+      'fondo_front2',
+    ]);
     showCinematicTitle(this, 'Contactame');
     this.cameras.main.fadeIn(800, 0, 0, 0);
 
@@ -53,11 +64,9 @@ export class CrystalBallScene extends Phaser.Scene {
       ease: 'Sine.easeInOut',
     });
 
-    // Centro visual - más arriba
     const centerX = crystalInside.x;
     const centerY = crystalInside.y - crystalInside.displayHeight * 0.35; // Subido más
 
-    // Icono principal
     this.displayIcon = this.add
       .image(0, 0, '')
       .setScale(8)
@@ -65,10 +74,8 @@ export class CrystalBallScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setAlpha(1);
 
-    // Texto relativo al icono - más abajo
     this.displayText = this.add
       .text(0, 150, '', {
-        // Aumentado de 100 a 150
         fontSize: '24px',
         color: '#ffffff',
         backgroundColor: '#00000088',
@@ -86,7 +93,7 @@ export class CrystalBallScene extends Phaser.Scene {
         color: '#ffffff',
         padding: { x: 15, y: 8 },
       })
-      .setOrigin(0.5) // Centrar el origen
+      .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
 
     const rightArrow = this.add
@@ -108,7 +115,6 @@ export class CrystalBallScene extends Phaser.Scene {
       rightArrow,
     ]);
 
-    // Interacciones
     leftArrow.on('pointerdown', () => {
       this.currentIndex =
         (this.currentIndex - 1 + contactItems.length) % contactItems.length;
@@ -127,7 +133,6 @@ export class CrystalBallScene extends Phaser.Scene {
 
     this.updateContactItem();
 
-    // volver
     const backText = this.add
       .text(width - 180, height - 60, '← Volver', {
         fontSize: '28px',
