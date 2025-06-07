@@ -16,6 +16,13 @@ export class BundleScene extends Phaser.Scene {
     this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
 
     this.load.image('react', '/assets/skills/react.png');
+    this.load.image('git-branch', '/assets/icons/git.png');
+    this.load.image('docker', '/assets/icons/docker.png');
+    this.load.image('java', '/assets/icons/java.png');
+    this.load.image('database', '/assets/icons/sql.png');
+    this.load.image('python', '/assets/icons/python.png');
+    this.load.image('android', '/assets/icons/android.png');
+    this.load.image('terminal', '/assets/icons/terminal.png');
 
     this.load.image('bundle_Inside', '/assets/bundle/leather_expand.png');
   }

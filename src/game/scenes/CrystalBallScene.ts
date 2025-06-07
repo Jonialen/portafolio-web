@@ -92,13 +92,13 @@ export class CrystalBallScene extends Phaser.Scene {
     const rightArrow = this.add
       .text(150, 150, '>', {
         fontSize: '32px',
-        fontFamily: 'Arial, sans-serif', 
+        fontFamily: 'Arial, sans-serif',
         fontStyle: 'bold',
         backgroundColor: '#000000aa',
         color: '#ffffff',
         padding: { x: 15, y: 8 },
       })
-      .setOrigin(0.5) 
+      .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
 
     this.add.container(centerX, centerY, [
@@ -153,7 +153,6 @@ export class CrystalBallScene extends Phaser.Scene {
       alpha: 0,
       duration: 150,
       onComplete: () => {
-
         this.displayIcon.setTexture(item.icon);
         this.displayText.setText(item.label);
 
