@@ -5,7 +5,7 @@ import { createLoopTweens } from './createTweens';
 import { handlePointerOver } from './handlers/handlePointerOver';
 import { handlePointerOut } from './handlers/handlePointerOut';
 import { handlePointerDown } from './handlers/handlePointerDown';
-import type { InteractiveObjectConfig } from './types';
+import type { InteractiveObjectConfig } from '../../types/typesInteractive';
 
 export function createInteractiveObject(config: InteractiveObjectConfig) {
   const { scene, x, y, scale = 1, idleAnim, hoverAnim, targetScene } = config;
@@ -18,7 +18,7 @@ export function createInteractiveObject(config: InteractiveObjectConfig) {
   const spriteWidth = width * scale;
   const spriteHeight = height * scale;
 
-  const showPosY = spriteHeight * 0.4;
+  const showPosY = spriteHeight * 0.5;
   const shadowWidth = spriteWidth * 1.4;
   const shadowHeight = 10 * scale;
 

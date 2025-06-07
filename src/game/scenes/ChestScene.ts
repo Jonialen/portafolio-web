@@ -3,9 +3,12 @@ import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { createAlignedGrid } from '../utils/gridUtils';
 import { showCinematicTitle } from '../utils/cinematicTitle';
 import { projects } from '../data/projects';
+import type { MusicControl } from '../types/musicTypes';
+import { playSceneMusic } from '../music/playSceneMusic';
 
 export class ChestScene extends Phaser.Scene {
   respirationTween!: Phaser.Tweens.Tween;
+  musicControl?: MusicControl;
   constructor() {
     super({ key: 'ChestScene' });
   }
@@ -25,6 +28,11 @@ export class ChestScene extends Phaser.Scene {
     this.load.image('book_portfolio', '/assets/tools/book.png');
 
     this.load.image('chest_indor', '/assets/chest/generic_54.png');
+
+    this.load.audio('second', ['/songs/second.mp3']);
+    this.load.audio('intro_song', ['/songs/dungeonTitle2.mp3']);
+    this.load.audio('hover_sound', '/songs/hoverSound.mp3');
+    this.load.audio('click_sound', '/songs/clicSound.mp3');
   }
 
   create() {
@@ -37,6 +45,20 @@ export class ChestScene extends Phaser.Scene {
       'fondo_front2',
     ]);
 
+    this.musicControl = playSceneMusic(this, {
+      introKey: 'intro_song',
+      mainKey: 'second',
+      introVolume: 0.2,
+      volume: 0.1,
+      fadeDuration: 0,
+    });
+
+    this.events.once('shutdown', () => {
+      if (this.musicControl) {
+        this.musicControl.stopAll();
+      }
+    });
+
     const chestInside = this.add
       .image(width / 2, height - 200, 'chest_indor')
       .setOrigin(0.5, 1);
@@ -48,7 +70,14 @@ export class ChestScene extends Phaser.Scene {
     showCinematicTitle(this, 'Cofre de Proyectos');
     this.cameras.main.fadeIn(800, 0, 0, 0);
 
-    const gridElements = createAlignedGrid(this, chestInside, projects, 9, 6);
+    const gridElements = createAlignedGrid(
+      this,
+      chestInside,
+      projects,
+      { hover: 'hover_sound', click: 'click_sound' },
+      9,
+      6
+    );
     const allTargets = [chestInside, ...gridElements];
 
     this.respirationTween = this.tweens.add({
@@ -75,6 +104,10 @@ export class ChestScene extends Phaser.Scene {
 
       this.time.delayedCall(850, () => {
         this.scene.start('MainScene');
+
+        if (this.musicControl) {
+          this.musicControl.stopAll();
+        }
       });
     });
   }

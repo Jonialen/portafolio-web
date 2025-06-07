@@ -11,6 +11,7 @@ export function createAlignedGrid(
     description: string;
     onClick: () => void;
   }[],
+  soundKeys = { hover: '', click: '' },
   spriteCols = 9,
   spriteRows = 6,
   cellSizeSprite = 16,
@@ -20,6 +21,9 @@ export function createAlignedGrid(
   const scale = Image.scale;
   const cellSize = cellSizeSprite * scale;
   const padding = paddingSprite * scale;
+
+  const hoverSound = soundKeys.hover;
+  const clickSound = soundKeys.click;
 
   const totalWidth =
     (cellSizeSprite + paddingSprite) * spriteCols - paddingSprite;
@@ -42,7 +46,7 @@ export function createAlignedGrid(
 
       const project = items[i];
       if (project) {
-        const bg = scene.add
+        scene.add
           .rectangle(x, y, cellSize, cellSize, 0x000000, 0.2)
           .setStrokeStyle(1, 0xffffff, 0.1)
           .setOrigin(0.5);
@@ -60,6 +64,7 @@ export function createAlignedGrid(
           hoverScale: 1.15,
           hoverDuration: 150,
           clickScale: 0.92,
+          soundKeys: { hover: hoverSound, click: clickSound },
         });
       }
 

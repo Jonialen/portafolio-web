@@ -2,12 +2,15 @@ import Phaser from 'phaser';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { showCinematicTitle } from '../utils/cinematicTitle';
 import { contactItems } from '../data/contactItems';
+import type { MusicControl } from '../types/musicTypes';
+import { playSceneMusic } from '../music/playSceneMusic';
 
 export class CrystalBallScene extends Phaser.Scene {
   respirationTween!: Phaser.Tweens.Tween;
   currentIndex = 0;
   displayIcon!: Phaser.GameObjects.Image;
   displayText!: Phaser.GameObjects.Text;
+  musicControl?: MusicControl;
   constructor() {
     super({ key: 'CrystalBallScene' });
   }
@@ -32,6 +35,9 @@ export class CrystalBallScene extends Phaser.Scene {
     this.load.image('email_icon', '/assets/icons/mail.png');
     this.load.image('linkedin_icon', '/assets/icons/linkedin.png');
     this.load.image('cv_icon', '/assets/icons/cv.png');
+
+    this.load.audio('second', ['/songs/second.mp3']);
+    this.load.audio('intro_song', ['/songs/dungeonTitle2.mp3']);
   }
 
   create() {
@@ -43,8 +49,23 @@ export class CrystalBallScene extends Phaser.Scene {
       'fondo_middle2',
       'fondo_front2',
     ]);
+
+    this.musicControl = playSceneMusic(this, {
+      introKey: 'intro_song',
+      mainKey: 'second',
+      introVolume: 0.2,
+      volume: 0.1,
+      fadeDuration: 0,
+    });
+
+    this.events.once('shutdown', () => {
+      if (this.musicControl) {
+        this.musicControl.stopAll();
+      }
+    });
+
     showCinematicTitle(this, 'Contactame');
-    this.cameras.main.fadeIn(800, 0, 0, 0);
+    this.cameras.main.fadeIn(1000, 0, 0, 0);
 
     const crystalInside = this.add
       .image(width / 2, height - 200, 'cristal_inside')
@@ -146,6 +167,9 @@ export class CrystalBallScene extends Phaser.Scene {
       this.cameras.main.fadeOut(800, 0, 0, 0);
       this.time.delayedCall(850, () => {
         this.scene.start('MainScene');
+        if (this.musicControl) {
+          this.musicControl.stopAll();
+        }
       });
     });
   }

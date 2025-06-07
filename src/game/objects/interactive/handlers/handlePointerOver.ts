@@ -24,9 +24,6 @@ export function handlePointerOver(ctx: {
     breathingTween,
     floatingTween,
     shadowTween,
-    originalCameraX,
-    originalCameraY,
-    originalZoom,
     scene,
     x,
     y,
@@ -40,8 +37,6 @@ export function handlePointerOver(ctx: {
   breathingTween.pause();
   floatingTween.pause();
   shadowTween.pause();
-
-  const currentSprite = altSprite && altSprite.visible ? altSprite : sprite;
 
   if (altSprite) {
     altSprite.setVisible(true).setAlpha(1).setScale(config.scale);

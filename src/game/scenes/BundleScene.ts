@@ -3,9 +3,12 @@ import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { createAlignedGrid } from '../utils/gridUtils';
 import { showCinematicTitle } from '../utils/cinematicTitle';
 import { skills } from '../data/skills';
+import type { MusicControl } from '../types/musicTypes';
+import { playSceneMusic } from '../music/playSceneMusic';
 
 export class BundleScene extends Phaser.Scene {
   respirationTween!: Phaser.Tweens.Tween;
+  musicControl?: MusicControl;
   constructor() {
     super({ key: 'BundleScene' });
   }
@@ -31,6 +34,12 @@ export class BundleScene extends Phaser.Scene {
     this.load.image('terminal', '/assets/icons/terminal.png');
 
     this.load.image('bundle_Inside', '/assets/bundle/leather_expand.png');
+
+    this.load.audio('second', ['/songs/second.mp3']);
+    this.load.audio('intro_song', ['/songs/dungeonTitle2.mp3']);
+
+    this.load.audio('hover_sound', '/songs/hoverSound.mp3');
+    this.load.audio('click_sound', '/songs/clicSound.mp3');
   }
 
   create() {
@@ -42,6 +51,20 @@ export class BundleScene extends Phaser.Scene {
       'fondo_middle2',
       'fondo_front2',
     ]);
+
+    this.musicControl = playSceneMusic(this, {
+      introKey: 'intro_song',
+      mainKey: 'second',
+      introVolume: 0.2,
+      volume: 0.1,
+      fadeDuration: 0,
+    });
+
+    this.events.once('shutdown', () => {
+      if (this.musicControl) {
+        this.musicControl.stopAll();
+      }
+    });
 
     const bundleInside = this.add
       .image(width / 2, height - 200, 'bundle_Inside')
@@ -58,16 +81,16 @@ export class BundleScene extends Phaser.Scene {
       this,
       bundleInside,
       skills,
+      { hover: 'hover_sound', click: 'click_sound' },
       4,
       4,
       8,
       2,
       -15
     );
-    const allTargets = [bundleInside, ...gridElements];
 
     this.respirationTween = this.tweens.add({
-      targets: allTargets,
+      targets: gridElements,
       scaleX: scale * 1.01,
       scaleY: scale * 1.01,
       duration: 2000,
@@ -91,6 +114,10 @@ export class BundleScene extends Phaser.Scene {
       this.time.delayedCall(850, () => {
         this.scene.start('MainScene');
       });
+
+      if (this.musicControl) {
+        this.musicControl.stopAll();
+      }
     });
   }
 }

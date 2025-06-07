@@ -6,7 +6,7 @@ export function showCinematicTitle(scene: Phaser.Scene, title: string) {
   const overlay = scene.add
     .rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
     .setDepth(1000)
-    .setAlpha(1); 
+    .setAlpha(1);
 
   const titleText = scene.add
     .text(width / 2, height / 2, title, {
@@ -24,7 +24,7 @@ export function showCinematicTitle(scene: Phaser.Scene, title: string) {
     scene.tweens.add({
       targets: [overlay, titleText],
       alpha: 0,
-      duration: 600,
+      duration: 2000,
       ease: 'Sine.easeInOut',
       onComplete: () => {
         overlay.destroy();

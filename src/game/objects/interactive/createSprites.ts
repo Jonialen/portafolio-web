@@ -1,4 +1,4 @@
-import type { InteractiveObjectConfig } from './types';
+import type { InteractiveObjectConfig } from '../../types/typesInteractive';
 
 export function createSprites(config: InteractiveObjectConfig) {
   const {

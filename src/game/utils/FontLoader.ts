@@ -5,7 +5,6 @@ export class FontLoader {
     fontName: string,
     scene: Phaser.Scene
   ): Promise<void> {
-
     if (this.loadedFonts.has(fontName)) {
       return Promise.resolve();
     }
@@ -57,7 +56,6 @@ export class FontLoader {
 
         scene.time.delayedCall(100, callback);
       } else {
-
         scene.time.delayedCall(100, checkFont);
       }
     };

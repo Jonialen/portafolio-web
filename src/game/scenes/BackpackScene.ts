@@ -1,13 +1,15 @@
-// scenes/BackpackScene.ts
 import Phaser from 'phaser';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { showCinematicTitle } from '../utils/cinematicTitle';
 import { FontLoader } from '../utils/FontLoader';
 import { DiaryBook } from '../objects/DiaryBook';
 import { diaryPages } from '../data/diaryPages';
+import type { MusicControl } from '../types/musicTypes';
+import { playSceneMusic } from '../music/playSceneMusic';
 
 export class BackpackScene extends Phaser.Scene {
   private diaryBook!: DiaryBook;
+  musicControl?: MusicControl;
 
   constructor() {
     super({ key: 'BackpackScene' });
@@ -26,6 +28,9 @@ export class BackpackScene extends Phaser.Scene {
     );
 
     this.load.image('book_page', '/assets/book/page.png');
+
+    this.load.audio('second', ['/songs/second.mp3']);
+    this.load.audio('intro_song', ['/songs/dungeonTitle2.mp3']);
   }
 
   async create() {
@@ -45,6 +50,20 @@ export class BackpackScene extends Phaser.Scene {
       'fondo_middle2',
       'fondo_front2',
     ]);
+
+    this.musicControl = playSceneMusic(this, {
+      introKey: 'intro_song',
+      mainKey: 'second',
+      introVolume: 0.2,
+      volume: 0.1,
+      fadeDuration: 0,
+    });
+
+    this.events.once('shutdown', () => {
+      if (this.musicControl) {
+        this.musicControl.stopAll();
+      }
+    });
 
     this.cameras.main.fadeIn(800, 0, 0, 0);
     showCinematicTitle(this, 'Diario Personal');
@@ -129,6 +148,10 @@ export class BackpackScene extends Phaser.Scene {
   }
 
   private exitScene() {
+    if (this.musicControl) {
+      this.musicControl.stopAll();
+    }
+
     if (this.diaryBook) {
       this.diaryBook.destroy();
     }
