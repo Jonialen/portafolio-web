@@ -1,54 +1,106 @@
-# React + TypeScript + Vite
+# Portafolio Web Interactivo
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Un portafolio personal gamificado que presenta información profesional a través de una experiencia de juego inmersiva desarrollada con Phaser 3.
 
-Currently, two official plugins are available:
+Disponible en:
+- 🌐 [portafolio.jonialen.com](https://portafolio.jonialen.com)
+- 🌐 [portafolio.eduvial.space](https://portafolio.eduvial.space)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🎮 Características
 
-## Expanding the ESLint configuration
+- **Experiencia Gamificada**: Navegación interactiva con objetos del juego que representan diferentes secciones
+- **Diario Personal**: Sistema de páginas interactivo que muestra información personal y profesional
+- **Showcase de Proyectos**: Grid interactivo mostrando proyectos con enlaces directos
+- **Sistema de Tooltips**: Información contextual con múltiples estilos visuales
+- **Efectos Cinemáticos**: Transiciones suaves entre escenas con títulos animados
+- **Audio Inmersivo**: Música de fondo y efectos de sonido
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🛠️ Tecnologías
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
+- **Frontend**: React 19.1.0 + TypeScript
+- **Build Tool**: Vite 6.3.5
+- **Game Engine**: Phaser 3.90.0
+- **Animations**: GSAP 3.13.0
+
+## 🚀 Instalación y Uso
+
+```bash
+# Clonar el repositorio
+git clone https://github.com/Jonialen/portafolio-web.git
+
+# Instalar dependencias
+npm install
+
+# Ejecutar en desarrollo
+npm run dev
+
+# Construir para producción
+npm run build
+
+# Vista previa de la build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📁 Estructura del Proyecto
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-});
 ```
+src/
+├── game/
+│   ├── data/           # Datos del contenido (proyectos, diario)
+│   ├── objects/        # Objetos del juego (DiaryBook, etc.)
+│   ├── scenes/         # Escenas principales del juego
+│   ├── types/          # Definiciones de TypeScript
+│   └── utils/          # Utilidades (tooltips, animaciones)
+```
+
+## 🎯 Funcionalidades Principales
+
+### Sistema de Diario Personal
+- **10 páginas** de contenido personal y profesional
+- **Navegación fluida** con animaciones de transición
+- **Diseño de libro** con efectos visuales inmersivos
+
+### Showcase de Proyectos
+Los proyectos incluyen:
+- Portafolio interactivo (este proyecto)
+- Sistema de reportes deportivos (React + FastAPI + PostgreSQL)
+- CRUD de recetas
+- EduVial (aplicación móvil educativa)
+- Dotfiles para Arch Linux
+
+### Sistema de Interacciones
+- **Hover effects** con escalado y efectos de color
+- **Tooltips informativos** con múltiples estilos
+- **Efectos de sonido** para feedback del usuario
+- **Animaciones suaves** usando tweens de Phaser
+
+## 🎨 Características Técnicas
+
+### Componentes de UI Mejorados
+- Sistema de tooltips con 3 estilos diferentes
+- Grid layout responsivo para iconos
+- Framework de interacciones estandarizado
+- Efectos cinemáticos para transiciones
+
+### Gestión de Escenas
+- Arquitectura modular con escenas especializadas
+- Sistema de navegación fluido
+- Gestión de audio por escena
+- Limpieza automática de recursos
+
+## 🌐 Demo en Vivo
+
+- 🔗 [https://portafolio.jonialen.com](https://portafolio.jonialen.com)
+- 🔗 [https://portafolio.eduvial.space](https://portafolio.eduvial.space)
+
+## 👨‍💻 Autor
+
+**Jonathan Alejandro Díaz Tahuite**  
+Estudiante de Ingeniería en Ciencias de la Computación  
+Desarrollador Full Stack  
+Entusiasta de Linux y tecnologías open source
+
+## 📄 Licencia
+
+Este proyecto está bajo la Licencia MIT.
+
