@@ -29,16 +29,16 @@ Disponible en:
 git clone https://github.com/Jonialen/portafolio-web.git
 
 # Instalar dependencias
-npm install
+bun install
 
 # Ejecutar en desarrollo
-npm run dev
+bun dev
 
 # Construir para producción
-npm run build
+bunx build
 
 # Vista previa de la build
-npm run preview
+bun preview
 ```
 
 ## 📁 Estructura del Proyecto
