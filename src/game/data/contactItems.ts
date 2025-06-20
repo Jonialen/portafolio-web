@@ -17,7 +17,7 @@ export const contactItems = [
     icon: 'cv_icon',
     label: 'Descargar CV',
     action: () => {
-      window.open('public/assets/cv/Curriculum.pdf', '_blank');
+      window.open('assets/cv/Curriculum.pdf', '_blank');
     },
   },
 ];
