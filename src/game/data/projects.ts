@@ -19,7 +19,7 @@ export const projects = [
       window.open('https://github.com/Jonialen/Proyecto3_bd_backend', '_blank');
       window.open('https://github.com/Jonialen/Proyecto3_bd_db', '_blank');
       window.open('https://github.com/Jonialen/Proyecto3_bd_fronted', '_blank');
-      window.open('https://bd-api.eduvial.space/', '_blank');
+      window.open('https://canchas.jonialen.com/', '_blank');
     },
   },
   {
@@ -30,7 +30,7 @@ export const projects = [
       'Aplicacion web para ver, editar, eliminar y actualizar recentas con react, fastapi y postgres.',
     onClick: () => {
       window.open('https://github.com/AleWWH1104/Lab3_BD', '_blank');
-      window.open('https://lab3-bd.eduvial.space/', '_blank');
+      window.open('https://recetas3.jonialen.com/', '_blank');
     },
   },
   {
@@ -43,6 +43,7 @@ export const projects = [
       window.open('https://github.com/Jonialen/EduVial-Backend', '_blank');
       window.open('https://github.com/Jonialen/EduVial-Database', '_blank');
       window.open('https://github.com/Jonialen/EduVial-Frontend', '_blank');
+      window.open('https://dev.eduvial.space/');
     },
   },
   {

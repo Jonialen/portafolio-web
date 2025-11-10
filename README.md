@@ -3,6 +3,7 @@
 Un portafolio personal gamificado que presenta información profesional a través de una experiencia de juego inmersiva desarrollada con Phaser 3.
 
 Disponible en:
+
 - 🌐 [portafolio.jonialen.com](https://portafolio.jonialen.com)
 - 🌐 [portafolio.eduvial.space](https://portafolio.eduvial.space)
 
@@ -56,12 +57,15 @@ src/
 ## 🎯 Funcionalidades Principales
 
 ### Sistema de Diario Personal
+
 - **10 páginas** de contenido personal y profesional
 - **Navegación fluida** con animaciones de transición
 - **Diseño de libro** con efectos visuales inmersivos
 
 ### Showcase de Proyectos
+
 Los proyectos incluyen:
+
 - Portafolio interactivo (este proyecto)
 - Sistema de reportes deportivos (React + FastAPI + PostgreSQL)
 - CRUD de recetas
@@ -69,6 +73,7 @@ Los proyectos incluyen:
 - Dotfiles para Arch Linux
 
 ### Sistema de Interacciones
+
 - **Hover effects** con escalado y efectos de color
 - **Tooltips informativos** con múltiples estilos
 - **Efectos de sonido** para feedback del usuario
@@ -77,12 +82,14 @@ Los proyectos incluyen:
 ## 🎨 Características Técnicas
 
 ### Componentes de UI Mejorados
+
 - Sistema de tooltips con 3 estilos diferentes
 - Grid layout responsivo para iconos
 - Framework de interacciones estandarizado
 - Efectos cinemáticos para transiciones
 
 ### Gestión de Escenas
+
 - Arquitectura modular con escenas especializadas
 - Sistema de navegación fluido
 - Gestión de audio por escena
@@ -103,4 +110,3 @@ Entusiasta de Linux y tecnologías open source
 ## 📄 Licencia
 
 Este proyecto está bajo la Licencia MIT.
-
