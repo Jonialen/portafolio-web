@@ -1,20 +1,6 @@
-export function handlePointerOut(ctx: {
-  sprite: any;
-  altSprite: any;
-  shadow: any;
-  label: any;
-  config: any;
-  breathingTween: any;
-  floatingTween: any;
-  shadowTween: any;
-  originalCameraX: any;
-  originalCameraY: any;
-  originalZoom: any;
-  scene: any;
-  state: any;
-  shadowWidth: any;
-  shadowHeight: any;
-}) {
+import type { InteractiveObjectContext } from '../../../types/InteractiveObjectContext';
+
+export function handlePointerOut(ctx: InteractiveObjectContext) {
   const {
     sprite,
     altSprite,

@@ -1,9 +1,11 @@
+import type Phaser from 'phaser';
+
 export function createLoopTweens(
   scene: Phaser.Scene,
-  sprite: { y: any },
-  shadow: { y: any },
+  sprite: Phaser.GameObjects.Sprite,
+  shadow: Phaser.GameObjects.Ellipse,
   y: number,
-  showPosY: any,
+  showPosY: number,
   scale: number
 ) {
   const shadowTween = scene.tweens.add({

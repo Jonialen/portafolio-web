@@ -1,20 +1,6 @@
-export function handlePointerOver(ctx: {
-  sprite: any;
-  altSprite: any;
-  shadow: any;
-  label: any;
-  config: any;
-  breathingTween: any;
-  floatingTween: any;
-  shadowTween: any;
-  originalCameraX: any;
-  originalCameraY: any;
-  originalZoom: any;
-  scene: any;
-  x: any;
-  y: any;
-  state: any;
-}) {
+import type { InteractiveObjectContext } from '../../../types/InteractiveObjectContext';
+
+export function handlePointerOver(ctx: InteractiveObjectContext) {
   const {
     sprite,
     altSprite,

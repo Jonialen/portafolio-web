@@ -1,6 +1,10 @@
 import Phaser from 'phaser';
 
-let tooltipBox: Phaser.GameObjects.Rectangle;
+interface RectangleWithCorners extends Phaser.GameObjects.Rectangle {
+  corners?: Phaser.GameObjects.Rectangle[];
+}
+
+let tooltipBox: RectangleWithCorners;
 let tooltipText: Phaser.GameObjects.Text;
 let innerBorder: Phaser.GameObjects.Rectangle;
 let outerBorder: Phaser.GameObjects.Rectangle;
@@ -44,7 +48,7 @@ export function showTooltip(
     : mainText.height;
   const totalWidth = Math.max(mainText.width, descriptionText?.width || 0);
 
-  const box = scene.add
+  const box: RectangleWithCorners = scene.add
     .rectangle(
       x,
       y,
@@ -90,6 +94,9 @@ export function showTooltip(
 
 export function hideTooltip() {
   tooltipBox?.destroy();
+  if (tooltipBox && tooltipBox.corners) {
+    tooltipBox.corners.forEach((c) => c.destroy());
+  }
   tooltipText?.destroy();
   innerBorder?.destroy();
   outerBorder?.destroy();
@@ -154,7 +161,7 @@ export function showStyledTooltip(
     : mainText.height;
   const totalWidth = Math.max(mainText.width, descriptionText?.width || 0);
 
-  const box = scene.add
+  const box: RectangleWithCorners = scene.add
     .rectangle(
       x,
       y,
@@ -258,7 +265,7 @@ export function showPixelTooltip(
   const boxWidth = totalWidth + padding * 2;
   const boxHeight = totalHeight + padding * 2;
 
-  const box = scene.add
+  const box: RectangleWithCorners = scene.add
     .rectangle(x, y, boxWidth, boxHeight, finalColors.bg, 1.0)
     .setOrigin(0, 0)
     .setDepth(999);
@@ -310,5 +317,5 @@ export function showPixelTooltip(
   tooltipBox = box;
   tooltipText = titleText;
   outerBorder = borderRect;
-  (box as any).corners = corners;
+  box.corners = corners;
 }
