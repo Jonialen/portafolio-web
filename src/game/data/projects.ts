@@ -5,7 +5,6 @@ export const projects = [
     icon: 'book_portfolio',
     description: 'Portfolio gamificado con Phaser',
     onClick: () => {
-      window.open('https://github.com/Jonialen/portafolio-web', '_blank');
       window.open('https://portafolio.jonialen.com', '_blank');
     },
   },
@@ -16,9 +15,6 @@ export const projects = [
     description:
       'Aplicacion web para visualizar reportes con react, fastapi y postgres.',
     onClick: () => {
-      window.open('https://github.com/Jonialen/Proyecto3_bd_backend', '_blank');
-      window.open('https://github.com/Jonialen/Proyecto3_bd_db', '_blank');
-      window.open('https://github.com/Jonialen/Proyecto3_bd_fronted', '_blank');
       window.open('https://canchas.jonialen.com/', '_blank');
     },
   },
@@ -27,9 +23,8 @@ export const projects = [
     name: 'Crud de recetas',
     icon: 'glowStone',
     description:
-      'Aplicacion web para ver, editar, eliminar y actualizar recentas con react, fastapi y postgres.',
+      'Aplicacion web para ver, editar, eliminar y actualizar recetas con react, fastapi y postgres.',
     onClick: () => {
-      window.open('https://github.com/AleWWH1104/Lab3_BD', '_blank');
       window.open('https://recetas3.jonialen.com/', '_blank');
     },
   },
@@ -38,12 +33,9 @@ export const projects = [
     name: 'Eduvial',
     icon: 'perl',
     description:
-      'Proyecto en desarrollo, aplicacion movil para ayudar con la enseñansa vehicular utilizando flutter, node(express) y postgres',
+      'Proyecto en desarrollo, aplicacion movil para ayudar con la enseñanza vehicular utilizando flutter, node(express) y postgres',
     onClick: () => {
-      window.open('https://github.com/Jonialen/EduVial-Backend', '_blank');
-      window.open('https://github.com/Jonialen/EduVial-Database', '_blank');
-      window.open('https://github.com/Jonialen/EduVial-Frontend', '_blank');
-      window.open('https://dev.eduvial.space/');
+      window.open('https://dev.eduvial.space/', '_blank');
     },
   },
   {
@@ -53,6 +45,15 @@ export const projects = [
     description: 'Dotfiles para configuracion de hyprland en arch linux',
     onClick: () => {
       window.open('https://github.com/Jonialen/dotfiles', '_blank');
+    },
+  },
+  {
+    id: '6',
+    name: 'RayTracer',
+    icon: 'sword',
+    description: 'Juego RayTracer que corre en terminal usando rust',
+    onClick: () => {
+      window.open();
     },
   },
 ];
