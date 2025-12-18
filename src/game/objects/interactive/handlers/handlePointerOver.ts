@@ -24,12 +24,14 @@ export function handlePointerOver(ctx: InteractiveObjectContext) {
   floatingTween.pause();
   shadowTween.pause();
 
+  const scale = config.scale ?? 1;
+
   if (altSprite) {
-    altSprite.setVisible(true).setAlpha(1).setScale(config.scale);
+    altSprite.setVisible(true).setAlpha(1).setScale(scale);
     sprite.setAlpha(0);
   } else {
     scene.tweens.add({ targets: sprite, duration: 200, tint: 0xffcc88 });
-    sprite.setScale(config.scale + 0.2);
+    sprite.setScale(scale + 0.2);
   }
 
   scene.tweens.add({
@@ -47,14 +49,15 @@ export function handlePointerOver(ctx: InteractiveObjectContext) {
   scene.tweens.add({ targets: label, alpha: 1, duration: 200 });
 
   if (config.zoomOnHover) {
+    const zoomAmount = config.zoomAmount ?? 1.2;
     if (state.currentZoomTween) state.currentZoomTween.stop();
-    const targetCameraX = x - scene.cameras.main.width / 2 / config.zoomAmount;
-    const targetCameraY = y - scene.cameras.main.height / 2 / config.zoomAmount;
+    const targetCameraX = x - scene.cameras.main.width / 2 / zoomAmount;
+    const targetCameraY = y - scene.cameras.main.height / 2 / zoomAmount;
     state.currentZoomTween = scene.tweens.add({
       targets: scene.cameras.main,
       scrollX: targetCameraX,
       scrollY: targetCameraY,
-      zoom: config.zoomAmount,
+      zoom: zoomAmount,
       duration: config.zoomDuration,
       ease: config.zoomEase,
       onComplete: () => (state.currentZoomTween = null),

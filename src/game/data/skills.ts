@@ -33,10 +33,10 @@ export const skills = [
   },
   {
     id: '5',
-    name: 'Kotlin',
+    name: 'Mobile Development',
     icon: 'android',
     description:
-      'Desarrollo de aplicaciones móviles Android como una app de recordatorios personales.',
+      'Desarrollo de aplicaciones móviles Android como una app de recordatorios personales y una similar a Duolingo llamada Eduvial.',
     onClick: () => {},
   },
   {

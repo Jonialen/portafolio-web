@@ -50,10 +50,10 @@ export const projects = [
   {
     id: '6',
     name: 'RayTracer',
-    icon: 'sword',
+    icon: 'fruta',
     description: 'Juego RayTracer que corre en terminal usando rust',
     onClick: () => {
-      window.open();
+      window.open('https://github.com/Jonialen/proyecto1-garficas', '_blank');
     },
   },
 ];
