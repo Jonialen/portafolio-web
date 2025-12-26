@@ -1,102 +1,69 @@
-import Phaser from 'phaser';
+import { BaseScene } from '../core/BaseScene';
+import {
+  AssetLoader,
+  BACKGROUNDS,
+  SPRITESHEETS,
+  AUDIO_FILES,
+} from '../config/assets';
 import { createInteractiveObject } from '../objects/interactive/InteractiveObject';
-import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { setupAnimations } from '../animations/AnimationSetup';
-import { playSceneMusic } from '../music/playSceneMusic';
-import { showCinematicTitle } from '../utils/cinematicTitle';
-import type { MusicControl } from '../types/musicTypes';
 
-export class MainScene extends Phaser.Scene {
-  musicControl?: MusicControl;
+/**
+ * Escena principal del juego (MainScene)
+ * Refactorizada usando BaseScene
+ */
+export class MainScene extends BaseScene {
   constructor() {
-    super({ key: 'MainScene' });
+    super({
+      sceneKey: 'MainScene',
+      title: 'Campamento',
+      backgroundKey: 'camp',
+      backgroundLayers: BACKGROUNDS.camp.layers.map((layer) => layer.key),
+      music: {
+        mainKey: AUDIO_FILES.music.mainTheme.key,
+        mainVolume: 0.1,
+      },
+      enableCinematicTitle: true,
+      enableBackButton: false, // Escena principal no necesita botón de volver
+      returnScene: '',
+    });
   }
 
   preload() {
-    // this.load.image(
-    //   'fondo1',
-    //   '/assets/scenes/oak_woods/background/background_layer_1.png'
-    // );
-    // this.load.image(
-    //   'fondo2',
-    //   '/assets/scenes/oak_woods/background/background_layer_2.png'
-    // );
-    // this.load.image(
-    //   'fondo3',
-    //   '/assets/scenes/oak_woods/background/background_layer_3.png'
-    // );
+    // Cargar background del campamento
+    AssetLoader.loadBackground(this, 'camp');
 
-    this.load.image('1', '/assets/scenes/camp/1.png');
-    this.load.image('2', '/assets/scenes/camp/2.png');
-    this.load.image('3', '/assets/scenes/camp/3.png');
-    this.load.image('4', '/assets/scenes/camp/4.png');
-    this.load.image('5', '/assets/scenes/camp/5.png');
-    this.load.image('6', '/assets/scenes/camp/6.png');
-    this.load.image('7', '/assets/scenes/camp/7.png');
-    this.load.image('8', '/assets/scenes/camp/8.png');
-    this.load.image('9', '/assets/scenes/camp/9.png');
+    // Cargar spritesheets
+    AssetLoader.loadSpritesheets(this, [
+      'chest',
+      'chestIdle',
+      'backpack',
+      'bundleOpen',
+      'bundleClose',
+      'crystalBall',
+    ]);
 
-    this.load.spritesheet('cofre', '/assets/chest/Chests.png', {
-      frameWidth: 48,
-      frameHeight: 32,
-    });
-
-    this.load.spritesheet('cofre1', '/assets/chest/Chests1.png', {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
-
-    this.load.spritesheet('backpack', '/assets/backpack/backpack_big.png', {
-      frameWidth: 16,
-      frameHeight: 16,
-    });
-
-    this.load.spritesheet('bundleOpen', '/assets/bundle/bundleOpen.png', {
-      frameWidth: 160,
-      frameHeight: 160,
-    });
-
-    this.load.spritesheet('bundleClose', '/assets/bundle/bundleClose.png', {
-      frameWidth: 120,
-      frameHeight: 140,
-    });
-
-    this.load.spritesheet(
-      'cristalBall',
-      '/assets/crystallball/Bola_de_cristal.png',
-      {
-        frameWidth: 32,
-        frameHeight: 32,
-      }
-    );
-
-    this.load.audio('main_theme', ['/songs/darkFantasy.mp3']);
+    // Cargar audio
+    this.load.audio(AUDIO_FILES.music.mainTheme.key, [
+      ...AUDIO_FILES.music.mainTheme.paths,
+    ]);
   }
 
-  create() {
-    // new ParallaxBackground(this, ['fondo1', 'fondo2', 'fondo3']);
-    new ParallaxBackground(this, ['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+  protected initializeContent(): void {
+    // Configurar animaciones
     setupAnimations(this);
-    this.cameras.main.fadeIn(800, 0, 0, 0);
 
-    this.musicControl = playSceneMusic(this, {
-      mainKey: 'main_theme',
-      volume: 0.1,
-    });
+    // Crear objetos interactivos
+    this.createInteractiveObjects();
+  }
 
-    showCinematicTitle(this, 'Campamento');
-
-    this.events.once('shutdown', () => {
-      if (this.musicControl) {
-        this.musicControl.stopAll();
-      }
-    });
-
+  private createInteractiveObjects() {
+    // Cofre de proyectos
     createInteractiveObject({
       scene: this,
       x: 300,
       y: 950,
-      spriteKey: 'cofre1',
+      spriteKey: SPRITESHEETS.chestIdle.key,
       idleAnim: 'cofre_idle',
       hoverAnim: 'cofre_hover',
       infoText: 'Explora mis proyectos',
@@ -109,11 +76,12 @@ export class MainScene extends Phaser.Scene {
       zoomEase: 'Sine.easeInOut',
     });
 
+    // Mochila personal (diario)
     createInteractiveObject({
       scene: this,
       x: 630,
       y: 890,
-      spriteKey: 'backpack',
+      spriteKey: SPRITESHEETS.backpack.key,
       idleAnim: '',
       hoverAnim: '',
       infoText: 'Mi Mochila personal',
@@ -122,12 +90,13 @@ export class MainScene extends Phaser.Scene {
       zoomOnHover: false,
     });
 
+    // Saco de habilidades
     createInteractiveObject({
       scene: this,
       x: 1200,
       y: 950,
-      spriteKey: 'bundleClose',
-      altSpriteKey: 'bundleOpen',
+      spriteKey: SPRITESHEETS.bundleClose.key,
+      altSpriteKey: SPRITESHEETS.bundleOpen.key,
       idleAnim: '',
       hoverAnim: '',
       infoText: 'Skills',
@@ -136,11 +105,12 @@ export class MainScene extends Phaser.Scene {
       zoomOnHover: false,
     });
 
+    // Bola de cristal (contacto)
     createInteractiveObject({
       scene: this,
       x: 1550,
       y: 940,
-      spriteKey: 'cristalBall',
+      spriteKey: SPRITESHEETS.crystalBall.key,
       altSpriteKey: '',
       idleAnim: '',
       hoverAnim: '',

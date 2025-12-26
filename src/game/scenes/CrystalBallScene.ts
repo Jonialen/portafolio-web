@@ -1,93 +1,96 @@
-import Phaser from 'phaser';
-import { ParallaxBackground } from '../objects/ParallaxBackground';
-import { showCinematicTitle } from '../utils/cinematicTitle';
+import { BaseScene } from '../core/BaseScene';
+import {
+  AssetLoader,
+  BACKGROUNDS,
+  IMAGES,
+  AUDIO_FILES,
+} from '../config/assets';
+import { ANIMATION } from '../config/constants';
 import { contactItems } from '../data/contactItems';
-import type { MusicControl } from '../types/musicTypes';
-import { playSceneMusic } from '../music/playSceneMusic';
 
-export class CrystalBallScene extends Phaser.Scene {
-  respirationTween!: Phaser.Tweens.Tween;
-  currentIndex = 0;
-  displayIcon!: Phaser.GameObjects.Image;
-  displayText!: Phaser.GameObjects.Text;
-  musicControl?: MusicControl;
+/**
+ * Escena de la bola de cristal (CrystalBallScene)
+ * Refactorizada usando BaseScene
+ */
+export class CrystalBallScene extends BaseScene {
+  private respirationTween?: Phaser.Tweens.Tween;
+  private currentIndex = 0;
+  private displayIcon!: Phaser.GameObjects.Image;
+  private displayText!: Phaser.GameObjects.Text;
+
   constructor() {
-    super({ key: 'CrystalBallScene' });
+    super({
+      sceneKey: 'CrystalBallScene',
+      title: 'Contactame',
+      backgroundKey: 'forestDark',
+      backgroundLayers: [...BACKGROUNDS.forestDark.layers],
+      music: {
+        introKey: AUDIO_FILES.music.introSong.key,
+        mainKey: AUDIO_FILES.music.second.key,
+        introVolume: 0.2,
+        mainVolume: 0.1,
+      },
+      enableCinematicTitle: true,
+      enableBackButton: true,
+      returnScene: 'MainScene',
+    });
   }
 
   preload() {
-    // this.load.image('fondo_back', '/assets/scenes/forest_light/back2.png');
-    // this.load.image('fondo_front', '/assets/scenes/forest_light/front2.png');
-    // this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
+    // Cargar background
+    AssetLoader.loadBackground(this, 'forestDark');
 
-    this.load.image('fondo_back2', '/assets/scenes/forest_dark/backDark.png');
-    this.load.image('fondo_front2', '/assets/scenes/forest_dark/frontDark.png');
-    this.load.image(
-      'fondo_middle2',
-      '/assets/scenes/forest_dark/middleDark.png'
-    );
+    // Cargar imagen de la bola de cristal
+    AssetLoader.loadSceneImages(this, ['crystalInside']);
 
-    this.load.image(
-      'cristal_inside',
-      '/assets/crystallball/Bola_de_cristal_inside.png'
-    );
+    // Cargar iconos de contacto
+    AssetLoader.loadContactIcons(this);
 
-    this.load.image('email_icon', '/assets/icons/mail.png');
-    this.load.image('linkedin_icon', '/assets/icons/linkedin.png');
-    this.load.image('cv_icon', '/assets/icons/cv.png');
-
-    this.load.audio('second', ['/songs/second.mp3']);
-    this.load.audio('intro_song', ['/songs/dungeonTitle2.mp3']);
+    // Cargar audio
+    this.load.audio(AUDIO_FILES.music.second.key, [
+      ...AUDIO_FILES.music.second.paths,
+    ]);
+    this.load.audio(AUDIO_FILES.music.introSong.key, [
+      ...AUDIO_FILES.music.introSong.paths,
+    ]);
   }
 
-  create() {
-    const { width, height } = this.cameras.main;
+  protected initializeContent(): void {
+    this.createCrystalDisplay();
+  }
 
-    // new ParallaxBackground(this, ['fondo_back', 'fondo_middle', 'fondo_front']);
-    new ParallaxBackground(this, [
-      'fondo_back2',
-      'fondo_middle2',
-      'fondo_front2',
-    ]);
+  private createCrystalDisplay() {
+    const { width, height } = this.getCameraSize();
 
-    this.musicControl = playSceneMusic(this, {
-      introKey: 'intro_song',
-      mainKey: 'second',
-      introVolume: 0.2,
-      volume: 0.1,
-      fadeDuration: 0,
-    });
-
-    this.events.once('shutdown', () => {
-      if (this.musicControl) {
-        this.musicControl.stopAll();
-      }
-    });
-
-    showCinematicTitle(this, 'Contactame');
-    this.cameras.main.fadeIn(1000, 0, 0, 0);
-
+    // Crear imagen de la bola de cristal
     const crystalInside = this.add
-      .image(width / 2, height - 200, 'cristal_inside')
+      .image(width / 2, height - 200, IMAGES.crystalInside.key)
       .setOrigin(0.5, 0.7);
 
-    const tex = this.textures.get('cristal_inside').getSourceImage();
-    const scale = Math.min((width * 0.6) / tex.width, 20);
+    // Calcular escala
+    const scale = this.calculateScale(IMAGES.crystalInside.key, 0.6, 20);
     crystalInside.setScale(scale);
 
+    // Agregar animación de respiración
     this.respirationTween = this.tweens.add({
       targets: crystalInside,
-      scaleX: scale * 1.01,
-      scaleY: scale * 1.01,
-      duration: 2000,
+      scaleX: scale * ANIMATION.breathing.scale,
+      scaleY: scale * ANIMATION.breathing.scale,
+      duration: ANIMATION.breathing.duration,
       yoyo: true,
       repeat: -1,
-      ease: 'Sine.easeInOut',
+      ease: ANIMATION.breathing.ease,
     });
 
-    const centerX = crystalInside.x;
-    const centerY = crystalInside.y - crystalInside.displayHeight * 0.35; // Subido más
+    // Crear interfaz de contacto
+    this.createContactInterface(crystalInside);
+  }
 
+  private createContactInterface(crystalInside: Phaser.GameObjects.Image) {
+    const centerX = crystalInside.x;
+    const centerY = crystalInside.y - crystalInside.displayHeight * 0.35;
+
+    // Icono de contacto
     this.displayIcon = this.add
       .image(0, 0, '')
       .setScale(8)
@@ -95,6 +98,7 @@ export class CrystalBallScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setAlpha(1);
 
+    // Texto de contacto
     this.displayText = this.add
       .text(0, 150, '', {
         fontSize: '24px',
@@ -105,30 +109,20 @@ export class CrystalBallScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setAlpha(1);
 
-    const leftArrow = this.add
-      .text(-150, 150, '<', {
-        fontSize: '32px',
-        fontFamily: 'Arial, sans-serif',
-        fontStyle: 'bold',
-        backgroundColor: '#000000aa',
-        color: '#ffffff',
-        padding: { x: 15, y: 8 },
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
+    // Flecha izquierda
+    const leftArrow = this.createArrow(-150, 150, '<', () => {
+      this.currentIndex =
+        (this.currentIndex - 1 + contactItems.length) % contactItems.length;
+      this.updateContactItem();
+    });
 
-    const rightArrow = this.add
-      .text(150, 150, '>', {
-        fontSize: '32px',
-        fontFamily: 'Arial, sans-serif',
-        fontStyle: 'bold',
-        backgroundColor: '#000000aa',
-        color: '#ffffff',
-        padding: { x: 15, y: 8 },
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
+    // Flecha derecha
+    const rightArrow = this.createArrow(150, 150, '>', () => {
+      this.currentIndex = (this.currentIndex + 1) % contactItems.length;
+      this.updateContactItem();
+    });
 
+    // Contenedor
     this.add.container(centerX, centerY, [
       this.displayIcon,
       this.displayText,
@@ -136,45 +130,40 @@ export class CrystalBallScene extends Phaser.Scene {
       rightArrow,
     ]);
 
-    leftArrow.on('pointerdown', () => {
-      this.currentIndex =
-        (this.currentIndex - 1 + contactItems.length) % contactItems.length;
-      this.updateContactItem();
-    });
-
-    rightArrow.on('pointerdown', () => {
-      this.currentIndex = (this.currentIndex + 1) % contactItems.length;
-      this.updateContactItem();
-    });
-
+    // Click en icono para ejecutar acción
     this.displayIcon.on('pointerdown', () => {
       const item = contactItems[this.currentIndex];
       item.action();
     });
 
+    // Mostrar primer item
     this.updateContactItem();
-
-    const backText = this.add
-      .text(width - 180, height - 60, '← Volver', {
-        fontSize: '28px',
-        backgroundColor: '#000000aa',
-        color: '#ffffff',
-        padding: { x: 10, y: 5 },
-      })
-      .setInteractive({ useHandCursor: true });
-
-    backText.on('pointerdown', () => {
-      this.cameras.main.fadeOut(800, 0, 0, 0);
-      this.time.delayedCall(850, () => {
-        this.scene.start('MainScene');
-        if (this.musicControl) {
-          this.musicControl.stopAll();
-        }
-      });
-    });
   }
 
-  updateContactItem() {
+  private createArrow(
+    x: number,
+    y: number,
+    text: string,
+    onClick: () => void
+  ): Phaser.GameObjects.Text {
+    const arrow = this.add
+      .text(x, y, text, {
+        fontSize: '32px',
+        fontFamily: 'Arial, sans-serif',
+        fontStyle: 'bold',
+        backgroundColor: '#000000aa',
+        color: '#ffffff',
+        padding: { x: 15, y: 8 },
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+
+    arrow.on('pointerdown', onClick);
+
+    return arrow;
+  }
+
+  private updateContactItem() {
     const item = contactItems[this.currentIndex];
 
     this.tweens.add({
@@ -192,5 +181,9 @@ export class CrystalBallScene extends Phaser.Scene {
         });
       },
     });
+  }
+
+  protected cleanupResources(): void {
+    this.respirationTween?.destroy();
   }
 }

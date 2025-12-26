@@ -1,118 +1,106 @@
-import Phaser from 'phaser';
-import { ParallaxBackground } from '../objects/ParallaxBackground';
+import { BaseScene } from '../core/BaseScene';
+import {
+  AssetLoader,
+  BACKGROUNDS,
+  IMAGES,
+  AUDIO_FILES,
+} from '../config/assets';
+import { GRID, ANIMATION } from '../config/constants';
 import { createAlignedGrid } from '../utils/gridUtils';
-import { showCinematicTitle } from '../utils/cinematicTitle';
 import { projects } from '../data/projects';
-import type { MusicControl } from '../types/musicTypes';
-import { playSceneMusic } from '../music/playSceneMusic';
 
-export class ChestScene extends Phaser.Scene {
-  respirationTween!: Phaser.Tweens.Tween;
-  musicControl?: MusicControl;
+/**
+ * Escena del cofre de proyectos
+ * Refactorizada usando BaseScene para eliminar código duplicado
+ */
+export class ChestScene extends BaseScene {
+  private respirationTween?: Phaser.Tweens.Tween;
+
   constructor() {
-    super({ key: 'ChestScene' });
+    super({
+      sceneKey: 'ChestScene',
+      title: 'Cofre de Proyectos',
+      backgroundKey: 'forestDark',
+      backgroundLayers: [...BACKGROUNDS.forestDark.layers], // Spread para crear copia mutable
+      music: {
+        introKey: AUDIO_FILES.music.introSong.key,
+        mainKey: AUDIO_FILES.music.second.key,
+        introVolume: 0.2,
+        mainVolume: 0.1,
+      },
+      enableCinematicTitle: true,
+      enableBackButton: true,
+      returnScene: 'MainScene',
+    });
   }
 
   preload() {
-    // this.load.image('fondo_back', '/assets/scenes/forest_light/back2.png');
-    // this.load.image('fondo_front', '/assets/scenes/forest_light/front2.png');
-    // this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
+    // Cargar background
+    AssetLoader.loadBackground(this, 'forestDark');
 
-    this.load.image('fondo_back2', '/assets/scenes/forest_dark/backDark.png');
-    this.load.image('fondo_front2', '/assets/scenes/forest_dark/frontDark.png');
-    this.load.image(
-      'fondo_middle2',
-      '/assets/scenes/forest_dark/middleDark.png'
-    );
+    // Cargar imagen del cofre
+    AssetLoader.loadSceneImages(this, ['chestInside']);
 
-    this.load.image('book_portfolio', '/assets/tools/book.png');
-    this.load.image('fruta', '/assets/tools/fruta.png');
-    this.load.image('glowStone', '/assets/tools/glowStone.png');
-    this.load.image('perl', '/assets/tools/perl.png');
-    this.load.image('sword', '/assets/tools/sword.png');
+    // Cargar iconos de proyectos
+    AssetLoader.loadProjectIcons(this);
 
-    this.load.image('chest_indor', '/assets/chest/generic_54.png');
-
-    this.load.audio('second', ['/songs/second.mp3']);
-    this.load.audio('intro_song', ['/songs/dungeonTitle2.mp3']);
-    this.load.audio('hover_sound', '/songs/hoverSound.mp3');
-    this.load.audio('click_sound', '/songs/clicSound.mp3');
+    // Cargar audio
+    this.load.audio(AUDIO_FILES.music.second.key, [
+      ...AUDIO_FILES.music.second.paths,
+    ]);
+    this.load.audio(AUDIO_FILES.music.introSong.key, [
+      ...AUDIO_FILES.music.introSong.paths,
+    ]);
+    this.load.audio(AUDIO_FILES.sfx.hover.key, AUDIO_FILES.sfx.hover.path);
+    this.load.audio(AUDIO_FILES.sfx.click.key, AUDIO_FILES.sfx.click.path);
   }
 
-  create() {
-    const { width, height } = this.cameras.main;
+  protected initializeContent(): void {
+    this.createChestDisplay();
+  }
 
-    // new ParallaxBackground(this, ['fondo_back', 'fondo_middle', 'fondo_front']);
-    new ParallaxBackground(this, [
-      'fondo_back2',
-      'fondo_middle2',
-      'fondo_front2',
-    ]);
+  private createChestDisplay() {
+    const { width, height } = this.getCameraSize();
 
-    this.musicControl = playSceneMusic(this, {
-      introKey: 'intro_song',
-      mainKey: 'second',
-      introVolume: 0.2,
-      volume: 0.1,
-      fadeDuration: 0,
-    });
-
-    this.events.once('shutdown', () => {
-      if (this.musicControl) {
-        this.musicControl.stopAll();
-      }
-    });
-
+    // Crear imagen del cofre
     const chestInside = this.add
-      .image(width / 2, height - 200, 'chest_indor')
+      .image(width / 2, height - 200, IMAGES.chestInside.key)
       .setOrigin(0.5, 1);
 
-    const tex = this.textures.get('chest_indor').getSourceImage();
-    const scale = Math.min((width * 0.6) / tex.width, 4.5);
+    // Calcular escala
+    const scale = this.calculateScale(IMAGES.chestInside.key);
     chestInside.setScale(scale);
 
-    showCinematicTitle(this, 'Cofre de Proyectos');
-    this.cameras.main.fadeIn(800, 0, 0, 0);
-
+    // Crear grid de proyectos
     const gridElements = createAlignedGrid(
       this,
       chestInside,
       projects,
-      { hover: 'hover_sound', click: 'click_sound' },
-      9,
-      6
+      {
+        hover: AUDIO_FILES.sfx.hover.key,
+        click: AUDIO_FILES.sfx.click.key,
+      },
+      GRID.chest.cols,
+      GRID.chest.rows,
+      GRID.chest.cellSize,
+      GRID.chest.padding,
+      GRID.chest.yOffset
     );
-    const allTargets = [chestInside, ...gridElements];
 
+    // Agregar animación de respiración
+    const allTargets = [chestInside, ...gridElements];
     this.respirationTween = this.tweens.add({
       targets: allTargets,
-      scaleX: scale * 1.01,
-      scaleY: scale * 1.01,
-      duration: 2000,
+      scaleX: scale * ANIMATION.breathing.scale,
+      scaleY: scale * ANIMATION.breathing.scale,
+      duration: ANIMATION.breathing.duration,
       yoyo: true,
       repeat: -1,
-      ease: 'Sine.easeInOut',
+      ease: ANIMATION.breathing.ease,
     });
+  }
 
-    const backText = this.add
-      .text(width - 180, height - 60, '← Volver', {
-        fontSize: '28px',
-        backgroundColor: '#000000aa',
-        color: '#ffffff',
-        padding: { x: 10, y: 5 },
-      })
-      .setInteractive({ useHandCursor: true });
-
-    backText.on('pointerdown', () => {
-      this.cameras.main.fadeOut(800, 0, 0, 0);
-
-      this.time.delayedCall(850, () => {
-        this.scene.start('MainScene');
-
-        if (this.musicControl) {
-          this.musicControl.stopAll();
-        }
-      });
-    });
+  protected cleanupResources(): void {
+    this.respirationTween?.destroy();
   }
 }

@@ -1,82 +1,75 @@
-import Phaser from 'phaser';
-import { ParallaxBackground } from '../objects/ParallaxBackground';
-import { showCinematicTitle } from '../utils/cinematicTitle';
+import { BaseScene } from '../core/BaseScene';
+import { AssetLoader, BACKGROUNDS, AUDIO_FILES } from '../config/assets';
 import { FontLoader } from '../utils/FontLoader';
 import { DiaryBook } from '../objects/DiaryBook';
 import { diaryPages } from '../data/diaryPages';
-import type { MusicControl } from '../types/musicTypes';
-import { playSceneMusic } from '../music/playSceneMusic';
 
-export class BackpackScene extends Phaser.Scene {
-  private diaryBook!: DiaryBook;
-  musicControl?: MusicControl;
+/**
+ * Escena del diario personal (BackpackScene)
+ * Refactorizada usando BaseScene
+ */
+export class BackpackScene extends BaseScene {
+  private diaryBook?: DiaryBook;
 
   constructor() {
-    super({ key: 'BackpackScene' });
+    super({
+      sceneKey: 'BackpackScene',
+      title: 'Diario Personal',
+      backgroundKey: 'forestDark',
+      backgroundLayers: [...BACKGROUNDS.forestDark.layers],
+      music: {
+        introKey: AUDIO_FILES.music.introSong.key,
+        mainKey: AUDIO_FILES.music.second.key,
+        introVolume: 0.2,
+        mainVolume: 0.1,
+      },
+      enableCinematicTitle: true,
+      enableBackButton: false, // Usamos botones custom
+      returnScene: 'MainScene',
+    });
   }
 
   preload() {
-    // this.load.image('fondo_back', '/assets/scenes/forest_light/back2.png');
-    // this.load.image('fondo_front', '/assets/scenes/forest_light/front2.png');
-    // this.load.image('fondo_middle', '/assets/scenes/forest_light/middle2.png');
+    // Cargar background
+    AssetLoader.loadBackground(this, 'forestDark');
 
-    this.load.image('fondo_back2', '/assets/scenes/forest_dark/backDark.png');
-    this.load.image('fondo_front2', '/assets/scenes/forest_dark/frontDark.png');
-    this.load.image(
-      'fondo_middle2',
-      '/assets/scenes/forest_dark/middleDark.png'
-    );
+    // Cargar imagen del libro
+    AssetLoader.loadSceneImages(this, ['bookPage']);
 
-    this.load.image('book_page', '/assets/book/page.png');
-
-    this.load.audio('second', ['/songs/second.mp3']);
-    this.load.audio('intro_song', ['/songs/dungeonTitle2.mp3']);
+    // Cargar audio
+    this.load.audio(AUDIO_FILES.music.second.key, [
+      ...AUDIO_FILES.music.second.paths,
+    ]);
+    this.load.audio(AUDIO_FILES.music.introSong.key, [
+      ...AUDIO_FILES.music.introSong.paths,
+    ]);
   }
 
   async create() {
+    // Llamar al create de BaseScene para configuración base
+    super.create();
+
+    // Cargar fuente y luego inicializar
     try {
       await FontLoader.loadGoogleFont('Shadows Into Light', this);
-      this.initScene();
     } catch (error) {
       console.warn('Font loading failed, using fallback:', error);
-      this.initScene();
     }
   }
 
-  private initScene() {
-    // new ParallaxBackground(this, ['fondo_back', 'fondo_middle', 'fondo_front']);
-    new ParallaxBackground(this, [
-      'fondo_back2',
-      'fondo_middle2',
-      'fondo_front2',
-    ]);
-
-    this.musicControl = playSceneMusic(this, {
-      introKey: 'intro_song',
-      mainKey: 'second',
-      introVolume: 0.2,
-      volume: 0.1,
-      fadeDuration: 0,
-    });
-
-    this.events.once('shutdown', () => {
-      if (this.musicControl) {
-        this.musicControl.stopAll();
-      }
-    });
-
-    this.cameras.main.fadeIn(800, 0, 0, 0);
-    showCinematicTitle(this, 'Diario Personal');
-
+  protected initializeContent(): void {
     this.diaryBook = new DiaryBook(this, diaryPages);
-
-    this.createExitButton();
+    this.createCustomButtons();
   }
 
-  private createExitButton() {
-    const { width, height } = this.cameras.main;
+  /**
+   * Crea botones personalizados para el diario
+   */
+  private createCustomButtons() {
+    const { width, height } = this.getCameraSize();
 
-    const backText = this.add
+    // Botón de cierre (X)
+    const closeButton = this.add
       .text(width - 30, 30, '✕', {
         fontSize: '32px',
         fontFamily: 'Arial',
@@ -89,30 +82,9 @@ export class BackpackScene extends Phaser.Scene {
       .setAlpha(0.7)
       .setDepth(100);
 
-    backText.on('pointerover', () => {
-      this.tweens.add({
-        targets: backText,
-        alpha: 1,
-        scale: 1.1,
-        duration: 200,
-        ease: 'Power2.easeOut',
-      });
-    });
+    this.setupButtonInteraction(closeButton);
 
-    backText.on('pointerout', () => {
-      this.tweens.add({
-        targets: backText,
-        alpha: 0.7,
-        scale: 1,
-        duration: 200,
-        ease: 'Power2.easeOut',
-      });
-    });
-
-    backText.on('pointerdown', () => {
-      this.exitScene();
-    });
-
+    // Botón de cerrar diario
     const exitButton = this.add
       .text(width - 180, height - 60, 'Cerrar Diario', {
         fontSize: '24px',
@@ -124,44 +96,41 @@ export class BackpackScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .setAlpha(0.8);
 
-    exitButton.on('pointerover', () => {
+    this.setupButtonInteraction(exitButton);
+  }
+
+  /**
+   * Configura interacciones para botones del diario
+   */
+  private setupButtonInteraction(button: Phaser.GameObjects.Text) {
+    button.on('pointerover', () => {
       this.tweens.add({
-        targets: exitButton,
+        targets: button,
         alpha: 1,
-        y: height - 65,
+        y: button.y - 5,
         duration: 200,
       });
     });
 
-    exitButton.on('pointerout', () => {
+    button.on('pointerout', () => {
       this.tweens.add({
-        targets: exitButton,
-        alpha: 0.8,
-        y: height - 60,
+        targets: button,
+        alpha: button.alpha === 1 ? 0.8 : 0.7,
+        y: button.y + 5,
         duration: 200,
       });
     });
 
-    exitButton.on('pointerdown', () => {
+    button.on('pointerdown', () => {
       this.exitScene();
     });
   }
 
-  private exitScene() {
-    if (this.musicControl) {
-      this.musicControl.stopAll();
-    }
-
-    if (this.diaryBook) {
-      this.diaryBook.destroy();
-    }
-
-    this.cameras.main.fadeOut(800, 0, 0, 0);
-    this.cameras.main.once('camerafadeoutcomplete', () => {
-      this.scene.start('MainScene');
-    });
+  protected cleanupResources(): void {
+    this.diaryBook?.destroy();
   }
 
+  // Métodos públicos para acceder al diario
   public getCurrentPage(): number {
     return this.diaryBook?.getCurrentPage() || 0;
   }
