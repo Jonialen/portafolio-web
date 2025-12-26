@@ -1,11 +1,11 @@
 export const projects = [
   {
     id: '1',
-    name: 'Portafolio interactivo',
+    name: 'ToDo App',
     icon: 'book_portfolio',
-    description: 'Portfolio gamificado con Phaser',
+    description: 'ToDo app multiplataforma con react, react native y Node.Js',
     onClick: () => {
-      window.open('https://portafolio.jonialen.com', '_blank');
+      window.open('', '_blank');
     },
   },
   {
