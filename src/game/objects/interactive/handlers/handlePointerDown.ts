@@ -1,10 +1,9 @@
 import { CAMERA } from '../../../config/constants';
-import type { BaseScene } from '../../../core/BaseScene';
 
 export function handlePointerDown(scene: Phaser.Scene, targetScene: string) {
-  if ('stopAudio' in scene) {
-    (scene as BaseScene).stopAudio();
-  }
+  // No llamar stopAudio() aqui: el fade tween seria destruido por scene.start()
+  // antes de completar. El shutdown handler de BaseScene llama audioManager.destroy()
+  // que detiene todo de forma inmediata cuando la escena se apaga.
 
   const { r, g, b } = CAMERA.fadeOut.rgb;
   scene.cameras.main.fadeOut(CAMERA.fadeOut.duration, r, g, b);

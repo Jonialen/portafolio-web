@@ -65,7 +65,7 @@ export class BundleScene extends BaseScene {
     bundleInside.setScale(scale);
 
     // Crear grid de habilidades
-    const gridElements = createAlignedGrid(
+    createAlignedGrid(
       this,
       bundleInside,
       skills,
@@ -80,10 +80,10 @@ export class BundleScene extends BaseScene {
       GRID.bundle.yOffset
     );
 
-    // Agregar animación de respiración
-    const allTargets = [bundleInside, ...gridElements];
+    // Agregar animación de respiración (solo al fondo, no a los iconos del grid
+    // que tienen su propia escala independiente via setDisplaySize)
     this.respirationTween = this.tweens.add({
-      targets: allTargets,
+      targets: bundleInside,
       scaleX: scale * ANIMATION.breathing.scale,
       scaleY: scale * ANIMATION.breathing.scale,
       duration: ANIMATION.breathing.duration,

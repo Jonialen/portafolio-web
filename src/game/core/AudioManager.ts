@@ -9,6 +9,7 @@ import type { MusicControl, SceneMusicConfig } from '../types/musicTypes';
 export class AudioManager implements MusicControl {
   private scene: Phaser.Scene;
   private currentMusic: Phaser.Sound.BaseSound | null = null;
+  private introSound: Phaser.Sound.BaseSound | null = null;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
@@ -66,10 +67,11 @@ export class AudioManager implements MusicControl {
     delay: number,
     fadeDuration: number
   ): void {
-    const intro = this.scene.sound.add(introKey, { volume: introVolume });
-    intro.play();
+    this.introSound = this.scene.sound.add(introKey, { volume: introVolume });
+    this.introSound.play();
 
-    intro.once('complete', () => {
+    this.introSound.once('complete', () => {
+      this.introSound = null;
       this.scene.time.delayedCall(delay, () => {
         this.playMainMusic(mainKey, mainVolume, fadeDuration);
       });
@@ -90,9 +92,13 @@ export class AudioManager implements MusicControl {
   }
 
   /**
-   * Detiene toda la musica con fade out
+   * Detiene toda la musica con fade out (tween-based).
+   * Solo usar cuando la escena seguira activa el tiempo suficiente
+   * para que el tween complete (ej: fade out de camara antes de scene.start).
    */
   stopAll(fadeDuration: number = AUDIO.fadeDuration): void {
+    this.stopIntro();
+
     if (this.currentMusic && this.currentMusic.isPlaying) {
       const musicRef = this.currentMusic;
       this.currentMusic = null;
@@ -115,10 +121,27 @@ export class AudioManager implements MusicControl {
   }
 
   /**
-   * Limpia todos los recursos de audio
+   * Detiene el intro sound de forma inmediata
+   */
+  private stopIntro(): void {
+    if (this.introSound) {
+      this.introSound.stop();
+      this.introSound.destroy();
+      this.introSound = null;
+    }
+  }
+
+  /**
+   * Detiene TODOS los sonidos de forma inmediata (sin tweens).
+   * Usar en shutdown handlers donde los tweens seran destruidos.
    */
   destroy(): void {
-    this.stopAll(0);
-    this.currentMusic = null;
+    this.stopIntro();
+
+    if (this.currentMusic) {
+      this.currentMusic.stop();
+      this.currentMusic.destroy();
+      this.currentMusic = null;
+    }
   }
 }

@@ -65,7 +65,7 @@ export class ChestScene extends BaseScene {
     chestInside.setScale(scale);
 
     // Crear grid de proyectos
-    const gridElements = createAlignedGrid(
+    createAlignedGrid(
       this,
       chestInside,
       projects,
@@ -80,10 +80,10 @@ export class ChestScene extends BaseScene {
       GRID.chest.yOffset
     );
 
-    // Agregar animación de respiración
-    const allTargets = [chestInside, ...gridElements];
+    // Agregar animación de respiración (solo al fondo, no a los iconos del grid
+    // que tienen su propia escala independiente via setDisplaySize)
     this.respirationTween = this.tweens.add({
-      targets: allTargets,
+      targets: chestInside,
       scaleX: scale * ANIMATION.breathing.scale,
       scaleY: scale * ANIMATION.breathing.scale,
       duration: ANIMATION.breathing.duration,

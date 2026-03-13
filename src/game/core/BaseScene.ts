@@ -102,11 +102,13 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Configura la limpieza de recursos al salir
+   * Configura la limpieza de recursos al salir.
+   * Usa destroy() (inmediato) en lugar de stopAll() (tween-based)
+   * porque los tweens son destruidos cuando la escena hace shutdown.
    */
   private setupCleanup() {
     this.events.once('shutdown', () => {
-      this.audioManager.stopAll();
+      this.audioManager.destroy();
       this.cleanupResources();
     });
   }
@@ -184,10 +186,11 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Sale de la escena con fade out
+   * Sale de la escena con fade out.
+   * No llama stopAll() directamente — el shutdown handler usa destroy()
+   * para detener el audio de forma inmediata cuando scene.start() se ejecuta.
    */
   protected exitScene() {
-    this.audioManager.stopAll();
     this.cleanupResources();
 
     const { r, g, b } = CAMERA.fadeOut.rgb;
@@ -200,11 +203,10 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Transicion a otra escena
+   * Transicion a otra escena.
+   * El audio se detiene automaticamente en el shutdown handler.
    */
   protected transitionToScene(targetScene: string) {
-    this.audioManager.stopAll();
-
     const { r, g, b } = CAMERA.fadeOut.rgb;
     this.cameras.main.fadeOut(CAMERA.fadeOut.duration, r, g, b);
     this.cameras.main.once('camerafadeoutcomplete', () => {
@@ -220,13 +222,6 @@ export abstract class BaseScene extends Phaser.Scene {
       width: this.cameras.main.width,
       height: this.cameras.main.height,
     };
-  }
-
-  /**
-   * Detiene todo el audio de la escena (accesible externamente)
-   */
-  public stopAudio(): void {
-    this.audioManager.stopAll();
   }
 
   /**
