@@ -1,4 +1,4 @@
-import { ANIMATION } from '../config/constants';
+import { addBreathingAnimation } from '../utils/animationUtils';
 
 export class DiaryBook {
   private scene: Phaser.Scene;
@@ -124,15 +124,7 @@ export class DiaryBook {
   }
 
   private createBreathingAnimation() {
-    this.respirationTween = this.scene.tweens.add({
-      targets: [this.bookPage],
-      scaleX: this.scale * ANIMATION.breathing.scale,
-      scaleY: this.scale * ANIMATION.breathing.scale,
-      duration: ANIMATION.breathing.duration,
-      yoyo: true,
-      repeat: -1,
-      ease: ANIMATION.breathing.ease,
-    });
+    this.respirationTween = addBreathingAnimation(this.scene, this.bookPage);
   }
 
   private updateButtonVisibility() {

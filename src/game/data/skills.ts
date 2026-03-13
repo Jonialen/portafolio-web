@@ -5,7 +5,6 @@ export const skills = [
     icon: 'react',
     description:
       'Experiencia desarrollando interfaces interactivas con React y backend en Express.js.',
-    onClick: () => {},
   },
   {
     id: '2',
@@ -13,7 +12,6 @@ export const skills = [
     icon: 'python',
     description:
       'Dominio de fundamentos de programación, estructuras de datos y automatización de tareas.',
-    onClick: () => {},
   },
   {
     id: '3',
@@ -21,7 +19,6 @@ export const skills = [
     icon: 'java',
     description:
       'Conocimientos en programación orientada a objetos y estructuras de datos.',
-    onClick: () => {},
   },
   {
     id: '4',
@@ -29,7 +26,6 @@ export const skills = [
     icon: 'database',
     description:
       'Capacidad para diseñar y consultar bases de datos relacionales.',
-    onClick: () => {},
   },
   {
     id: '5',
@@ -37,7 +33,6 @@ export const skills = [
     icon: 'android',
     description:
       'Desarrollo de aplicaciones móviles Android como una app de recordatorios personales y una similar a Duolingo llamada Eduvial.',
-    onClick: () => {},
   },
   {
     id: '6',
@@ -45,7 +40,6 @@ export const skills = [
     icon: 'terminal',
     description:
       'Experiencia trabajando en entornos Linux y uso de terminal para scripts Bash.',
-    onClick: () => {},
   },
   {
     id: '7',
@@ -53,7 +47,6 @@ export const skills = [
     icon: 'docker',
     description:
       'Familiaridad con contenedores para simplificar despliegues y entornos de desarrollo.',
-    onClick: () => {},
   },
   {
     id: '8',
@@ -61,6 +54,5 @@ export const skills = [
     icon: 'git-branch',
     description:
       'Control de versiones con Git y manejo de proyectos en plataformas como GitHub.',
-    onClick: () => {},
   },
 ];
