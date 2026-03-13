@@ -1,10 +1,12 @@
-export class ParallaxBackground {
-  private capas: Phaser.GameObjects.Image[] = [];
+import type { BackgroundLayer } from '../config/assets';
 
-  constructor(scene: Phaser.Scene, layerKeys: string[]) {
+export class ParallaxBackground {
+  private layers: Phaser.GameObjects.Image[] = [];
+
+  constructor(scene: Phaser.Scene, layers: BackgroundLayer[]) {
     const { width, height } = scene.cameras.main;
 
-    layerKeys.forEach((key, index) => {
+    layers.forEach(({ key }, index) => {
       const img = scene.add.image(0, 0, key).setOrigin(0);
       const tex = scene.textures.get(key).getSourceImage();
       const scale = Math.max(width / tex.width, height / tex.height);
@@ -13,7 +15,7 @@ export class ParallaxBackground {
 
       img.setDepth(index - 10);
 
-      this.capas.push(img);
+      this.layers.push(img);
 
       scene.tweens.add({
         targets: img,

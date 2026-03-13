@@ -5,12 +5,31 @@
 
 const ASSET_BASE_PATH = '/assets';
 
-export const BACKGROUNDS = {
+export interface BackgroundLayer {
+  key: string;
+  path: string;
+}
+
+export interface BackgroundConfig {
+  layers: BackgroundLayer[];
+}
+
+export const BACKGROUNDS: Record<string, BackgroundConfig> = {
   forestDark: {
-    back: `${ASSET_BASE_PATH}/scenes/forest_dark/backDark.png`,
-    middle: `${ASSET_BASE_PATH}/scenes/forest_dark/middleDark.png`,
-    front: `${ASSET_BASE_PATH}/scenes/forest_dark/frontDark.png`,
-    layers: ['fondo_back2', 'fondo_middle2', 'fondo_front2'],
+    layers: [
+      {
+        key: 'fondo_back2',
+        path: `${ASSET_BASE_PATH}/scenes/forest_dark/backDark.png`,
+      },
+      {
+        key: 'fondo_middle2',
+        path: `${ASSET_BASE_PATH}/scenes/forest_dark/middleDark.png`,
+      },
+      {
+        key: 'fondo_front2',
+        path: `${ASSET_BASE_PATH}/scenes/forest_dark/frontDark.png`,
+      },
+    ],
   },
   camp: {
     layers: Array.from({ length: 9 }, (_, i) => ({
@@ -47,7 +66,7 @@ export const SPRITESHEETS = {
     frameConfig: { frameWidth: 120, frameHeight: 140 },
   },
   crystalBall: {
-    key: 'cristalBall',
+    key: 'crystalBall',
     path: `${ASSET_BASE_PATH}/crystallball/Bola_de_cristal.png`,
     frameConfig: { frameWidth: 32, frameHeight: 32 },
   },
@@ -56,7 +75,7 @@ export const SPRITESHEETS = {
 export const IMAGES = {
   // Scene images
   chestInside: {
-    key: 'chest_indor',
+    key: 'chest_indoor',
     path: `${ASSET_BASE_PATH}/chest/generic_54.png`,
   },
   bundleInside: {
@@ -64,7 +83,7 @@ export const IMAGES = {
     path: `${ASSET_BASE_PATH}/bundle/leather_expand.png`,
   },
   crystalInside: {
-    key: 'cristal_inside',
+    key: 'crystal_inside',
     path: `${ASSET_BASE_PATH}/crystallball/Bola_de_cristal_inside.png`,
   },
   bookPage: {
@@ -137,36 +156,18 @@ export const AUDIO_FILES = {
  * Helper para cargar un grupo de assets
  */
 export class AssetLoader {
-  static loadBackground(
-    scene: Phaser.Scene,
-    backgroundKey: keyof typeof BACKGROUNDS
-  ) {
+  static loadBackground(scene: Phaser.Scene, backgroundKey: string) {
     const bg = BACKGROUNDS[backgroundKey];
+    if (!bg) {
+      console.warn(
+        `[AssetLoader] Background "${backgroundKey}" no encontrado.`
+      );
+      return;
+    }
 
-    // Verificar si es el tipo 'camp' con layers como array de objetos
-    if (backgroundKey === 'camp' && 'layers' in bg) {
-      const campLayers = bg.layers as Array<{ key: string; path: string }>;
-      campLayers.forEach((layer) => {
-        scene.load.image(layer.key, layer.path);
-      });
-    }
-    // Para backgrounds normales (forestDark, forestLight)
-    else if (
-      'back' in bg &&
-      'middle' in bg &&
-      'front' in bg &&
-      'layers' in bg
-    ) {
-      const normalBg = bg as {
-        back: string;
-        middle: string;
-        front: string;
-        layers: string[];
-      };
-      scene.load.image(normalBg.layers[0], normalBg.back);
-      scene.load.image(normalBg.layers[1], normalBg.middle);
-      scene.load.image(normalBg.layers[2], normalBg.front);
-    }
+    bg.layers.forEach((layer) => {
+      scene.load.image(layer.key, layer.path);
+    });
   }
 
   static loadSceneImages(
