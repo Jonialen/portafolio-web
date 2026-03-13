@@ -128,7 +128,7 @@ export abstract class BaseScene extends Phaser.Scene {
       .setOrigin(1, 0)
       .setInteractive({ useHandCursor: true })
       .setAlpha(UI.button.normalAlpha)
-      .setDepth(UI.button.depth || 100);
+      .setDepth(UI.button.depth);
 
     this.setupButtonInteractions(this.closeButton, () => this.exitScene());
   }

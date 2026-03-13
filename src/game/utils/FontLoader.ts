@@ -56,8 +56,4 @@ export class FontLoader {
 
     scene.time.delayedCall(300, checkFont);
   }
-
-  static getFontFamily(fontName: string): string {
-    return `"${fontName}", cursive, Georgia, serif`;
-  }
 }

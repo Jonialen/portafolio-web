@@ -1,3 +1,5 @@
+import { ANIMATION } from '../config/constants';
+
 export class DiaryBook {
   private scene: Phaser.Scene;
   private bookPage!: Phaser.GameObjects.Image;
@@ -124,12 +126,12 @@ export class DiaryBook {
   private createBreathingAnimation() {
     this.respirationTween = this.scene.tweens.add({
       targets: [this.bookPage],
-      scaleX: this.scale * 1.01,
-      scaleY: this.scale * 1.01,
-      duration: 2000,
+      scaleX: this.scale * ANIMATION.breathing.scale,
+      scaleY: this.scale * ANIMATION.breathing.scale,
+      duration: ANIMATION.breathing.duration,
       yoyo: true,
       repeat: -1,
-      ease: 'Sine.easeInOut',
+      ease: ANIMATION.breathing.ease,
     });
   }
 

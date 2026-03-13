@@ -54,12 +54,4 @@ export class BackpackScene extends BaseScene {
   protected cleanupResources(): void {
     this.diaryBook?.destroy();
   }
-
-  public getCurrentPage(): number {
-    return this.diaryBook?.getCurrentPage() || 0;
-  }
-
-  public getTotalPages(): number {
-    return this.diaryBook?.getTotalPages() || 0;
-  }
 }

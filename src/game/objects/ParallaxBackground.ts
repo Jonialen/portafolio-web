@@ -25,14 +25,4 @@ export class ParallaxBackground {
       });
     });
   }
-
-  getLayers() {
-    return this.capas;
-  }
-
-  setLayerDepths(startDepth: number = -10) {
-    this.capas.forEach((capa, index) => {
-      capa.setDepth(startDepth + index);
-    });
-  }
 }

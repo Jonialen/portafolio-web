@@ -94,19 +94,24 @@ export class AudioManager implements MusicControl {
    */
   stopAll(fadeDuration: number = AUDIO.fadeDuration): void {
     if (this.currentMusic && this.currentMusic.isPlaying) {
-      this.scene.tweens.add({
-        targets: this.currentMusic,
-        volume: 0,
-        duration: fadeDuration,
-        onComplete: () => {
-          this.currentMusic?.stop();
-          this.currentMusic?.destroy();
-          this.currentMusic = null;
-        },
-      });
-    }
+      const musicRef = this.currentMusic;
+      this.currentMusic = null;
 
-    this.scene.sound.stopAll();
+      if (fadeDuration > 0) {
+        this.scene.tweens.add({
+          targets: musicRef,
+          volume: 0,
+          duration: fadeDuration,
+          onComplete: () => {
+            musicRef.stop();
+            musicRef.destroy();
+          },
+        });
+      } else {
+        musicRef.stop();
+        musicRef.destroy();
+      }
+    }
   }
 
   /**

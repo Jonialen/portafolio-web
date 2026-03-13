@@ -145,6 +145,8 @@ export function showTooltip(
 }
 
 export function hideTooltip(): void {
-  activeTooltip?.destroy();
-  activeTooltip = null;
+  if (activeTooltip) {
+    activeTooltip.destroy();
+    activeTooltip = null;
+  }
 }

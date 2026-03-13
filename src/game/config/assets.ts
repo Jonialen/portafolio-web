@@ -12,12 +12,6 @@ export const BACKGROUNDS = {
     front: `${ASSET_BASE_PATH}/scenes/forest_dark/frontDark.png`,
     layers: ['fondo_back2', 'fondo_middle2', 'fondo_front2'],
   },
-  forestLight: {
-    back: `${ASSET_BASE_PATH}/scenes/forest_light/back2.png`,
-    middle: `${ASSET_BASE_PATH}/scenes/forest_light/middle2.png`,
-    front: `${ASSET_BASE_PATH}/scenes/forest_light/front2.png`,
-    layers: ['fondo_back', 'fondo_middle', 'fondo_front'],
-  },
   camp: {
     layers: Array.from({ length: 9 }, (_, i) => ({
       key: `${i + 1}`,
@@ -110,29 +104,31 @@ export const IMAGES = {
   cv: { key: 'cv_icon', path: `${ASSET_BASE_PATH}/icons/cv.png` },
 };
 
+const AUDIO_BASE_PATH = '/songs';
+
 export const AUDIO_FILES = {
   music: {
     mainTheme: {
       key: 'main_theme',
-      paths: [`${ASSET_BASE_PATH}/../songs/darkFantasy.mp3`],
+      paths: [`${AUDIO_BASE_PATH}/darkFantasy.mp3`],
     },
     second: {
       key: 'second',
-      paths: [`${ASSET_BASE_PATH}/../songs/second.mp3`],
+      paths: [`${AUDIO_BASE_PATH}/second.mp3`],
     },
     introSong: {
       key: 'intro_song',
-      paths: [`${ASSET_BASE_PATH}/../songs/dungeonTitle2.mp3`],
+      paths: [`${AUDIO_BASE_PATH}/dungeonTitle2.mp3`],
     },
   },
   sfx: {
     hover: {
       key: 'hover_sound',
-      path: `${ASSET_BASE_PATH}/../songs/hoverSound.mp3`,
+      path: `${AUDIO_BASE_PATH}/hoverSound.mp3`,
     },
     click: {
       key: 'click_sound',
-      path: `${ASSET_BASE_PATH}/../songs/clicSound.mp3`,
+      path: `${AUDIO_BASE_PATH}/clicSound.mp3`,
     },
   },
 };
@@ -235,10 +231,3 @@ export class AssetLoader {
     });
   }
 }
-
-export type BackgroundKey = keyof typeof BACKGROUNDS;
-export type ImageKey = keyof typeof IMAGES;
-export type SpritesheetKey = keyof typeof SPRITESHEETS;
-export type AudioKey =
-  | keyof typeof AUDIO_FILES.music
-  | keyof typeof AUDIO_FILES.sfx;

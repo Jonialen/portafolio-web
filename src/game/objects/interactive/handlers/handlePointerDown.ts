@@ -1,12 +1,10 @@
 import { CAMERA } from '../../../config/constants';
-
-interface SceneWithAudio extends Phaser.Scene {
-  stopAudio?: () => void;
-}
+import type { BaseScene } from '../../../core/BaseScene';
 
 export function handlePointerDown(scene: Phaser.Scene, targetScene: string) {
-  const sceneWithAudio = scene as SceneWithAudio;
-  sceneWithAudio.stopAudio?.();
+  if ('stopAudio' in scene) {
+    (scene as BaseScene).stopAudio();
+  }
 
   const { r, g, b } = CAMERA.fadeOut.rgb;
   scene.cameras.main.fadeOut(CAMERA.fadeOut.duration, r, g, b);
