@@ -30,4 +30,16 @@ export interface I18nStrings {
     github: string;
     downloadCV: string;
   };
+  // Quick View overlay
+  quickView: {
+    title: string;
+    button: string;
+    close: string;
+    aboutTitle: string;
+    projectsTitle: string;
+    skillsTitle: string;
+    contactTitle: string;
+    viewProject: string;
+    mobileBanner: string;
+  };
 }

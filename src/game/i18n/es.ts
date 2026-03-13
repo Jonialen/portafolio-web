@@ -26,4 +26,16 @@ export const es: I18nStrings = {
     github: 'GitHub',
     downloadCV: 'Descargar CV',
   },
+  quickView: {
+    title: 'Vista Rápida',
+    button: 'Vista Rápida',
+    close: 'Cerrar',
+    aboutTitle: 'Sobre mí',
+    projectsTitle: 'Proyectos',
+    skillsTitle: 'Habilidades',
+    contactTitle: 'Contacto',
+    viewProject: 'Ver →',
+    mobileBanner:
+      'Para la mejor experiencia, usa un navegador de escritorio. Toca el botón para ver el contenido.',
+  },
 };

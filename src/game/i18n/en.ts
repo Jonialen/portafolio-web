@@ -26,4 +26,16 @@ export const en: I18nStrings = {
     github: 'GitHub',
     downloadCV: 'Download CV',
   },
+  quickView: {
+    title: 'Quick View',
+    button: 'Quick View',
+    close: 'Close',
+    aboutTitle: 'About Me',
+    projectsTitle: 'Projects',
+    skillsTitle: 'Skills',
+    contactTitle: 'Contact',
+    viewProject: 'View →',
+    mobileBanner:
+      'For the best experience, use a desktop browser. Tap the button to view content.',
+  },
 };
