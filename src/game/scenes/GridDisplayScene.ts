@@ -42,7 +42,7 @@ export interface GridDisplayConfig {
  */
 export abstract class GridDisplayScene extends BaseScene {
   private respirationTween?: Phaser.Tweens.Tween;
-  protected abstract readonly gridConfig: GridDisplayConfig;
+  protected abstract gridConfig: GridDisplayConfig;
 
   constructor(baseConfig: BaseSceneConfig) {
     super(baseConfig);

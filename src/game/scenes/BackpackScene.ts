@@ -2,7 +2,8 @@ import { BaseScene } from '../core/BaseScene';
 import { AssetLoader, BACKGROUNDS, AUDIO_FILES } from '../config/assets';
 import { FontLoader } from '../utils/FontLoader';
 import { DiaryBook } from '../objects/DiaryBook';
-import { diaryPages } from '../data/diaryPages';
+import { getDiaryPages } from '../data/diaryPages';
+import { i18n } from '../i18n';
 
 /**
  * Escena del diario personal (BackpackScene)
@@ -51,7 +52,9 @@ export class BackpackScene extends BaseScene {
   }
 
   protected initializeContent(): void {
-    this.diaryBook = new DiaryBook(this, diaryPages);
+    // Update title with current language
+    this.config.title = i18n.t.scenes.backpack;
+    this.diaryBook = new DiaryBook(this, getDiaryPages());
   }
 
   protected cleanupResources(): void {

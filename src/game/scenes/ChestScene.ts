@@ -2,16 +2,17 @@ import { BACKGROUNDS, AUDIO_FILES, AssetLoader } from '../config/assets';
 import { GRID } from '../config/constants';
 import { GridDisplayScene } from './GridDisplayScene';
 import type { GridDisplayConfig } from './GridDisplayScene';
-import { projects } from '../data/projects';
+import { getProjects } from '../data/projects';
+import { i18n } from '../i18n';
 
 /**
  * Escena del cofre de proyectos
  * Extiende GridDisplayScene para reutilizar la lógica de grid
  */
 export class ChestScene extends GridDisplayScene {
-  protected readonly gridConfig: GridDisplayConfig = {
+  protected gridConfig: GridDisplayConfig = {
     insideImageKey: 'chestInside',
-    items: projects,
+    items: getProjects(),
     grid: GRID.chest,
     loadIcons: (scene) => AssetLoader.loadProjectIcons(scene),
   };
@@ -32,5 +33,12 @@ export class ChestScene extends GridDisplayScene {
       enableBackButton: true,
       returnScene: 'MainScene',
     });
+  }
+
+  protected initializeContent(): void {
+    // Update title and items with current language
+    this.config.title = i18n.t.scenes.chest;
+    this.gridConfig.items = getProjects();
+    super.initializeContent();
   }
 }

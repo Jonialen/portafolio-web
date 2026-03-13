@@ -2,7 +2,8 @@ import Phaser from 'phaser';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
 import { AudioManager } from './AudioManager';
 import { showCinematicTitle } from '../utils/cinematicTitle';
-import { CAMERA, UI } from '../config/constants';
+import { CAMERA, DEPTH, UI } from '../config/constants';
+import { i18n } from '../i18n';
 import type { SceneMusicConfig } from '../types/musicTypes';
 import type { BackgroundLayer } from '../config/assets';
 
@@ -35,6 +36,7 @@ export abstract class BaseScene extends Phaser.Scene {
   protected parallaxBackground?: ParallaxBackground;
   protected backButton?: Phaser.GameObjects.Text;
   protected closeButton?: Phaser.GameObjects.Text;
+  protected muteButton?: Phaser.GameObjects.Text;
 
   constructor(config: BaseSceneConfig) {
     super({ key: config.sceneKey });
@@ -64,18 +66,13 @@ export abstract class BaseScene extends Phaser.Scene {
       this.events.once('create', () => {
         const { width, height } = this.cameras.main;
         this.add
-          .text(
-            width / 2,
-            height - 40,
-            'Error cargando recursos. Por favor, recarga la página.',
-            {
-              fontSize: '16px',
-              fontFamily: 'Arial, sans-serif',
-              color: '#ff4444',
-              backgroundColor: '#000000cc',
-              padding: { x: 12, y: 6 },
-            }
-          )
+          .text(width / 2, height - 40, i18n.t.ui.loadError, {
+            fontSize: '16px',
+            fontFamily: 'Arial, sans-serif',
+            color: '#ff4444',
+            backgroundColor: '#000000cc',
+            padding: { x: 12, y: 6 },
+          })
           .setOrigin(0.5)
           .setDepth(1000);
       });
@@ -95,6 +92,9 @@ export abstract class BaseScene extends Phaser.Scene {
 
     // Inicializar el contenido especifico de la escena
     this.initializeContent();
+
+    // Crear botón de mute/unmute
+    this.createMuteButton();
 
     if (this.config.enableBackButton && this.config.returnScene) {
       this.createBackButton();
@@ -166,13 +166,45 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
+   * Crea el boton de mute/unmute
+   */
+  protected createMuteButton() {
+    const label = this.audioManager.isMuted ? '\ud83d\udd07' : '\ud83d\udd0a';
+
+    this.muteButton = this.add
+      .text(70, 30, label, {
+        fontSize: '28px',
+        fontFamily: 'Arial',
+        backgroundColor: UI.button.backgroundColor,
+        color: UI.button.color,
+        padding: { x: 10, y: 6 },
+      })
+      .setOrigin(0.5, 0)
+      .setScrollFactor(0)
+      .setDepth(DEPTH.ui)
+      .setInteractive({ useHandCursor: true })
+      .setAlpha(UI.button.normalAlpha);
+
+    this.muteButton.on('pointerover', () =>
+      this.muteButton?.setAlpha(UI.button.hoverAlpha)
+    );
+    this.muteButton.on('pointerout', () =>
+      this.muteButton?.setAlpha(UI.button.normalAlpha)
+    );
+    this.muteButton.on('pointerdown', () => {
+      const muted = this.audioManager.toggleMute();
+      this.muteButton?.setText(muted ? '\ud83d\udd07' : '\ud83d\udd0a');
+    });
+  }
+
+  /**
    * Crea el boton de regreso
    */
   protected createBackButton() {
     const { width, height } = this.cameras.main;
 
     this.backButton = this.add
-      .text(width - 180, height - 60, '\u2190 Volver', {
+      .text(width - 180, height - 60, i18n.t.ui.back, {
         fontSize: UI.button.fontSize,
         fontFamily: 'Georgia, serif',
         backgroundColor: UI.button.backgroundColor,

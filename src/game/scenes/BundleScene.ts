@@ -2,16 +2,17 @@ import { BACKGROUNDS, AUDIO_FILES, AssetLoader } from '../config/assets';
 import { GRID } from '../config/constants';
 import { GridDisplayScene } from './GridDisplayScene';
 import type { GridDisplayConfig } from './GridDisplayScene';
-import { skills } from '../data/skills';
+import { getSkills } from '../data/skills';
+import { i18n } from '../i18n';
 
 /**
  * Escena del saco de habilidades (BundleScene)
  * Extiende GridDisplayScene para reutilizar la lógica de grid
  */
 export class BundleScene extends GridDisplayScene {
-  protected readonly gridConfig: GridDisplayConfig = {
+  protected gridConfig: GridDisplayConfig = {
     insideImageKey: 'bundleInside',
-    items: skills,
+    items: getSkills(),
     grid: GRID.bundle,
     loadIcons: (scene) => AssetLoader.loadSkillIcons(scene),
     scaleConfig: {
@@ -36,5 +37,12 @@ export class BundleScene extends GridDisplayScene {
       enableBackButton: true,
       returnScene: 'MainScene',
     });
+  }
+
+  protected initializeContent(): void {
+    // Update title and items with current language
+    this.config.title = i18n.t.scenes.bundle;
+    this.gridConfig.items = getSkills();
+    super.initializeContent();
   }
 }
