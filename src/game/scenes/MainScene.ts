@@ -18,7 +18,7 @@ export class MainScene extends BaseScene {
       sceneKey: 'MainScene',
       title: 'Campamento',
       backgroundKey: 'camp',
-      backgroundLayers: BACKGROUNDS.camp.layers.map((layer) => layer.key),
+      backgroundLayers: [...BACKGROUNDS.camp.layers],
       music: {
         mainKey: AUDIO_FILES.music.mainTheme.key,
         mainVolume: 0.1,
@@ -30,6 +30,8 @@ export class MainScene extends BaseScene {
   }
 
   preload() {
+    super.preload();
+
     // Cargar background del campamento
     AssetLoader.loadBackground(this, 'camp');
 
@@ -62,8 +64,8 @@ export class MainScene extends BaseScene {
       x: 300,
       y: 950,
       spriteKey: SPRITESHEETS.chestIdle.key,
-      idleAnim: 'cofre_idle',
-      hoverAnim: 'cofre_hover',
+      idleAnim: 'chest_idle',
+      hoverAnim: 'chest_hover',
       infoText: 'Explora mis proyectos',
       targetScene: 'ChestScene',
       scale: 4,

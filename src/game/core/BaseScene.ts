@@ -4,6 +4,7 @@ import { AudioManager } from './AudioManager';
 import { showCinematicTitle } from '../utils/cinematicTitle';
 import { CAMERA, UI } from '../config/constants';
 import type { SceneMusicConfig } from '../types/musicTypes';
+import type { BackgroundLayer } from '../config/assets';
 
 /**
  * Configuracion base para todas las escenas
@@ -12,7 +13,7 @@ export interface BaseSceneConfig {
   sceneKey: string;
   title?: string;
   backgroundKey: string;
-  backgroundLayers: string[];
+  backgroundLayers: BackgroundLayer[];
   music?: SceneMusicConfig;
   enableCinematicTitle?: boolean;
   enableBackButton?: boolean;
@@ -50,6 +51,35 @@ export abstract class BaseScene extends Phaser.Scene {
    */
   protected cleanupResources(): void {
     // Las escenas hijas pueden sobrescribir esto
+  }
+
+  preload() {
+    // Handler global para errores de carga de assets
+    this.load.on('loaderror', (fileObj: Phaser.Loader.File) => {
+      console.error(
+        `[AssetError] Error cargando: ${fileObj.key} (${fileObj.url})`
+      );
+
+      // Mostrar mensaje al usuario cuando la escena esté lista
+      this.events.once('create', () => {
+        const { width, height } = this.cameras.main;
+        this.add
+          .text(
+            width / 2,
+            height - 40,
+            'Error cargando recursos. Por favor, recarga la página.',
+            {
+              fontSize: '16px',
+              fontFamily: 'Arial, sans-serif',
+              color: '#ff4444',
+              backgroundColor: '#000000cc',
+              padding: { x: 12, y: 6 },
+            }
+          )
+          .setOrigin(0.5)
+          .setDepth(1000);
+      });
+    });
   }
 
   create() {

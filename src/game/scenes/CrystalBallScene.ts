@@ -5,8 +5,8 @@ import {
   IMAGES,
   AUDIO_FILES,
 } from '../config/assets';
-import { ANIMATION } from '../config/constants';
 import { contactItems } from '../data/contactItems';
+import { addBreathingAnimation } from '../utils/animationUtils';
 
 /**
  * Escena de la bola de cristal (CrystalBallScene)
@@ -37,6 +37,8 @@ export class CrystalBallScene extends BaseScene {
   }
 
   preload() {
+    super.preload();
+
     // Cargar background
     AssetLoader.loadBackground(this, 'forestDark');
 
@@ -67,15 +69,7 @@ export class CrystalBallScene extends BaseScene {
     crystalInside.setScale(scale);
 
     // Agregar animación de respiración
-    this.respirationTween = this.tweens.add({
-      targets: crystalInside,
-      scaleX: scale * ANIMATION.breathing.scale,
-      scaleY: scale * ANIMATION.breathing.scale,
-      duration: ANIMATION.breathing.duration,
-      yoyo: true,
-      repeat: -1,
-      ease: ANIMATION.breathing.ease,
-    });
+    this.respirationTween = addBreathingAnimation(this, crystalInside);
 
     // Crear interfaz de contacto
     this.createContactInterface(crystalInside);

@@ -30,6 +30,7 @@ export class BackpackScene extends BaseScene {
   }
 
   preload() {
+    super.preload();
     AssetLoader.loadBackground(this, 'forestDark');
     AssetLoader.loadSceneImages(this, ['bookPage']);
 
@@ -38,13 +39,15 @@ export class BackpackScene extends BaseScene {
   }
 
   async create() {
-    super.create();
-
     try {
       await FontLoader.loadGoogleFont('Shadows Into Light', this);
     } catch {
       // Font loading failed, fallback fonts will be used
     }
+
+    // Llamar super.create() DESPUÉS de cargar la fuente
+    // para que initializeContent() (que crea DiaryBook) use la fuente correcta
+    super.create();
   }
 
   protected initializeContent(): void {

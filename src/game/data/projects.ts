@@ -5,7 +5,11 @@ export const projects = [
     icon: 'book_portfolio',
     description: 'Portfolio gamificado con Phaser',
     onClick: () => {
-      window.open('https://portafolio.jonialen.com', '_blank');
+      window.open(
+        'https://portafolio.jonialen.com',
+        '_blank',
+        'noopener,noreferrer'
+      );
     },
   },
   {
@@ -15,7 +19,11 @@ export const projects = [
     description:
       'Aplicacion web para visualizar reportes con react, fastapi y postgres.',
     onClick: () => {
-      window.open('https://canchas.jonialen.com/', '_blank');
+      window.open(
+        'https://canchas.jonialen.com/',
+        '_blank',
+        'noopener,noreferrer'
+      );
     },
   },
   {
@@ -25,7 +33,11 @@ export const projects = [
     description:
       'Aplicacion web para ver, editar, eliminar y actualizar recetas con react, fastapi y postgres.',
     onClick: () => {
-      window.open('https://recetas3.jonialen.com/', '_blank');
+      window.open(
+        'https://recetas3.jonialen.com/',
+        '_blank',
+        'noopener,noreferrer'
+      );
     },
   },
   {
@@ -35,7 +47,11 @@ export const projects = [
     description:
       'Proyecto en desarrollo, aplicacion movil para ayudar con la enseñanza vehicular utilizando flutter, node(express) y postgres',
     onClick: () => {
-      window.open('https://dev.eduvial.space/', '_blank');
+      window.open(
+        'https://dev.eduvial.space/',
+        '_blank',
+        'noopener,noreferrer'
+      );
     },
   },
   {
@@ -44,7 +60,11 @@ export const projects = [
     icon: 'sword',
     description: 'Dotfiles para configuracion de hyprland en arch linux',
     onClick: () => {
-      window.open('https://github.com/Jonialen/dotfiles', '_blank');
+      window.open(
+        'https://github.com/Jonialen/dotfiles',
+        '_blank',
+        'noopener,noreferrer'
+      );
     },
   },
   {
@@ -53,7 +73,11 @@ export const projects = [
     icon: 'fruta',
     description: 'Juego RayTracer que corre en terminal usando rust',
     onClick: () => {
-      window.open('https://github.com/Jonialen/proyecto1-garficas', '_blank');
+      window.open(
+        'https://github.com/Jonialen/proyecto1-garficas',
+        '_blank',
+        'noopener,noreferrer'
+      );
     },
   },
 ];
