@@ -8,16 +8,18 @@ import {
 import { getContactItems } from '../data/contactItems';
 import type { ContactItem } from '../data/contactItems';
 import { addBreathingAnimation } from '../utils/animationUtils';
-import { ANIMATION } from '../config/constants';
 import { i18n } from '../i18n';
 
 /**
  * Escena de la bola de cristal (CrystalBallScene)
- * Muestra todos los contactos simultáneamente en un layout vertical
+ * Refactorizada usando BaseScene
  */
 export class CrystalBallScene extends BaseScene {
   private respirationTween?: Phaser.Tweens.Tween;
-  private contactRows: Phaser.GameObjects.Container[] = [];
+  private currentIndex = 0;
+  private displayIcon!: Phaser.GameObjects.Image;
+  private displayText!: Phaser.GameObjects.Text;
+  private items: ContactItem[] = [];
 
   constructor() {
     super({
@@ -56,9 +58,8 @@ export class CrystalBallScene extends BaseScene {
   protected initializeContent(): void {
     // Update title with current language
     this.config.title = i18n.t.scenes.crystalBall;
-    const items = getContactItems();
+    this.items = getContactItems();
     this.createCrystalDisplay();
-    this.createContactGrid(items);
   }
 
   private createCrystalDisplay() {
@@ -75,97 +76,109 @@ export class CrystalBallScene extends BaseScene {
 
     // Agregar animación de respiración
     this.respirationTween = addBreathingAnimation(this, crystalInside);
+
+    // Crear interfaz de contacto
+    this.createContactInterface(crystalInside);
   }
 
-  /**
-   * Crea un grid vertical con todos los items de contacto visibles a la vez.
-   * Cada fila: icono + label, clickeable con efecto hover.
-   */
-  private createContactGrid(items: ContactItem[]) {
-    const { width, height } = this.getCameraSize();
-    const centerX = width / 2;
-    const rowSpacing = 80;
-    const totalHeight = (items.length - 1) * rowSpacing;
-    const startY = height / 2 - totalHeight / 2 - 40;
+  private createContactInterface(crystalInside: Phaser.GameObjects.Image) {
+    const centerX = crystalInside.x;
+    const centerY = crystalInside.y - crystalInside.displayHeight * 0.35;
 
-    items.forEach((item, index) => {
-      const rowY = startY + index * rowSpacing;
-      this.createContactRow(item, centerX, rowY);
-    });
-  }
+    // Icono de contacto
+    this.displayIcon = this.add
+      .image(0, 0, '')
+      .setScale(8)
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true })
+      .setAlpha(1);
 
-  /**
-   * Crea una fila de contacto interactiva: icono + texto.
-   */
-  private createContactRow(item: ContactItem, x: number, y: number) {
-    const icon = this.add.image(-120, 0, item.icon).setScale(5).setOrigin(0.5);
-
-    const label = this.add
-      .text(-60, 0, item.label, {
-        fontSize: '26px',
-        fontFamily: 'Georgia, serif',
+    // Texto de contacto
+    this.displayText = this.add
+      .text(0, 150, '', {
+        fontSize: '24px',
         color: '#ffffff',
         backgroundColor: '#00000088',
-        padding: { x: 14, y: 8 },
+        padding: { x: 10, y: 5 },
       })
-      .setOrigin(0, 0.5);
+      .setOrigin(0.5)
+      .setAlpha(1);
 
-    const row = this.add.container(x, y, [icon, label]);
-
-    // Zona interactiva que cubre toda la fila
-    const hitWidth = 340;
-    const hitHeight = 60;
-    const hitZone = this.add
-      .zone(0, 0, hitWidth, hitHeight)
-      .setInteractive({ useHandCursor: true });
-    row.add(hitZone);
-
-    // Hover: escala + tint
-    hitZone.on('pointerover', () => {
-      this.tweens.add({
-        targets: row,
-        scaleX: ANIMATION.hover.scale,
-        scaleY: ANIMATION.hover.scale,
-        duration: ANIMATION.hover.duration,
-        ease: 'Power2.easeOut',
-      });
-      label.setTint(ANIMATION.hover.tint);
-      icon.setTint(ANIMATION.hover.tint);
+    // Flecha izquierda
+    const leftArrow = this.createArrow(-150, 150, '<', () => {
+      this.currentIndex =
+        (this.currentIndex - 1 + this.items.length) % this.items.length;
+      this.updateContactItem();
     });
 
-    hitZone.on('pointerout', () => {
-      this.tweens.add({
-        targets: row,
-        scaleX: 1,
-        scaleY: 1,
-        duration: ANIMATION.hover.duration,
-        ease: 'Power2.easeOut',
-      });
-      label.clearTint();
-      icon.clearTint();
+    // Flecha derecha
+    const rightArrow = this.createArrow(150, 150, '>', () => {
+      this.currentIndex = (this.currentIndex + 1) % this.items.length;
+      this.updateContactItem();
     });
 
-    // Click: ejecutar acción del contacto
-    hitZone.on('pointerdown', () => {
+    // Contenedor
+    this.add.container(centerX, centerY, [
+      this.displayIcon,
+      this.displayText,
+      leftArrow,
+      rightArrow,
+    ]);
+
+    // Click en icono para ejecutar acción
+    this.displayIcon.on('pointerdown', () => {
+      const item = this.items[this.currentIndex];
       item.action();
     });
 
-    // Animación de entrada escalonada
-    row.setAlpha(0);
-    this.tweens.add({
-      targets: row,
-      alpha: 1,
-      y: y,
-      duration: 400,
-      delay: this.contactRows.length * 100,
-      ease: 'Power2.easeOut',
-    });
+    // Mostrar primer item
+    this.updateContactItem();
+  }
 
-    this.contactRows.push(row);
+  private createArrow(
+    x: number,
+    y: number,
+    text: string,
+    onClick: () => void
+  ): Phaser.GameObjects.Text {
+    const arrow = this.add
+      .text(x, y, text, {
+        fontSize: '32px',
+        fontFamily: 'Arial, sans-serif',
+        fontStyle: 'bold',
+        backgroundColor: '#000000aa',
+        color: '#ffffff',
+        padding: { x: 15, y: 8 },
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+
+    arrow.on('pointerdown', onClick);
+
+    return arrow;
+  }
+
+  private updateContactItem() {
+    const item = this.items[this.currentIndex];
+
+    this.tweens.add({
+      targets: [this.displayIcon, this.displayText],
+      alpha: 0,
+      duration: 150,
+      onComplete: () => {
+        this.displayIcon.setTexture(item.icon);
+        this.displayText.setText(item.label);
+
+        this.tweens.add({
+          targets: [this.displayIcon, this.displayText],
+          alpha: 1,
+          duration: 150,
+        });
+      },
+    });
   }
 
   protected cleanupResources(): void {
     this.respirationTween?.destroy();
-    this.contactRows = [];
   }
 }
