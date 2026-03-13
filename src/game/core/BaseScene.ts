@@ -101,6 +101,13 @@ export abstract class BaseScene extends Phaser.Scene {
       this.createCloseButton();
     }
 
+    // Notify React about scene state (sub-scene active or not)
+    window.dispatchEvent(
+      new CustomEvent('phaser-scene-change', {
+        detail: { isSubScene: !!this.config.enableBackButton },
+      })
+    );
+
     this.setupCleanup();
   }
 

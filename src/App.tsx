@@ -8,10 +8,22 @@ function App() {
   const [quickViewOpen, setQuickViewOpen] = useState(false);
   const [lang, setLang] = useState<Language>(i18n.current);
   const [bannerVisible, setBannerVisible] = useState(true);
+  const [isSubScene, setIsSubScene] = useState(false);
 
   useEffect(() => {
     const unsub = i18n.onLanguageChange((l) => setLang(l));
     return unsub;
+  }, []);
+
+  // Listen for Phaser scene changes to hide trigger in sub-scenes
+  useEffect(() => {
+    const handleSceneChange = (e: Event) => {
+      const detail = (e as CustomEvent<{ isSubScene: boolean }>).detail;
+      setIsSubScene(detail.isSubScene);
+    };
+    window.addEventListener('phaser-scene-change', handleSceneChange);
+    return () =>
+      window.removeEventListener('phaser-scene-change', handleSceneChange);
   }, []);
 
   const t = i18n.t.quickView;
@@ -36,17 +48,19 @@ function App() {
         </div>
       )}
 
-      {/* Floating Quick View button */}
-      <button
-        className="quickview-trigger"
-        onClick={() => setQuickViewOpen(true)}
-        aria-label={t.button}
-      >
-        <span className="quickview-trigger-icon" aria-hidden="true">
-          &#9889;
-        </span>
-        {t.button}
-      </button>
+      {/* Floating Quick View button — hidden when a sub-scene is active */}
+      {!isSubScene && (
+        <button
+          className="quickview-trigger"
+          onClick={() => setQuickViewOpen(true)}
+          aria-label={t.button}
+        >
+          <span className="quickview-trigger-icon" aria-hidden="true">
+            &#9889;
+          </span>
+          {t.button}
+        </button>
+      )}
 
       {/* Quick View overlay */}
       <QuickView
