@@ -75,24 +75,34 @@ export function QuickView({ isOpen, onClose }: QuickViewProps) {
       aria-label={t.title}
     >
       <div className="quickview-content">
-        {/* Close */}
+        {/* Bottom corner ornaments (top corners use ::before/::after on content) */}
+        <div className="quickview-corners-bottom" aria-hidden="true" />
+
+        {/* Close — diamond-shaped RPG button */}
         <button
           className="quickview-close"
           onClick={onClose}
           aria-label={t.close}
         >
-          &times;
+          <span>&times;</span>
         </button>
 
         {/* Header */}
-        <h1 className="quickview-title">{t.title}</h1>
-        <p className="quickview-subtitle">
-          Jonathan Alejandro D&iacute;az Tahuite
-        </p>
+        <div className="quickview-header">
+          <h1 className="quickview-title">{t.title}</h1>
+          <p className="quickview-subtitle">
+            Jonathan Alejandro D&iacute;az Tahuite
+          </p>
+        </div>
 
         {/* ── About ─────────────────────────── */}
         <section className="quickview-section quickview-about">
-          <h2>{t.aboutTitle}</h2>
+          <h2>
+            <span className="quickview-section-icon" aria-hidden="true">
+              &#x1F4DC;
+            </span>
+            {t.aboutTitle}
+          </h2>
           {diary.map((paragraph, idx) => (
             <p key={idx}>{paragraph}</p>
           ))}
@@ -100,7 +110,12 @@ export function QuickView({ isOpen, onClose }: QuickViewProps) {
 
         {/* ── Projects ──────────────────────── */}
         <section className="quickview-section">
-          <h2>{t.projectsTitle}</h2>
+          <h2>
+            <span className="quickview-section-icon" aria-hidden="true">
+              &#x2694;&#xFE0F;
+            </span>
+            {t.projectsTitle}
+          </h2>
           <div className="quickview-projects">
             {projects.map((p) => (
               <div className="quickview-project-card" key={p.id}>
@@ -123,7 +138,12 @@ export function QuickView({ isOpen, onClose }: QuickViewProps) {
 
         {/* ── Skills ────────────────────────── */}
         <section className="quickview-section">
-          <h2>{t.skillsTitle}</h2>
+          <h2>
+            <span className="quickview-section-icon" aria-hidden="true">
+              &#x1F4E6;
+            </span>
+            {t.skillsTitle}
+          </h2>
           <div className="quickview-skills">
             {skills.map((s) => (
               <span
@@ -139,7 +159,12 @@ export function QuickView({ isOpen, onClose }: QuickViewProps) {
 
         {/* ── Contact ───────────────────────── */}
         <section className="quickview-section">
-          <h2>{t.contactTitle}</h2>
+          <h2>
+            <span className="quickview-section-icon" aria-hidden="true">
+              &#x1F52E;
+            </span>
+            {t.contactTitle}
+          </h2>
           <ul className="quickview-contact-list">
             {contacts.map((c, idx) => (
               <li key={idx}>
