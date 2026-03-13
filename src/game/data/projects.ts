@@ -42,6 +42,7 @@ const projectActions: Record<string, () => void> = {
     );
   },
   '6': () => {
+    // Note: repo name has a typo (garficas -> graficas)
     window.open(
       'https://github.com/Jonialen/proyecto1-garficas',
       '_blank',
