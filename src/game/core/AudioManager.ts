@@ -10,9 +10,26 @@ export class AudioManager implements MusicControl {
   private scene: Phaser.Scene;
   private currentMusic: Phaser.Sound.BaseSound | null = null;
   private introSound: Phaser.Sound.BaseSound | null = null;
+  private muted: boolean;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
+    this.muted = localStorage.getItem('audio-muted') === 'true';
+  }
+
+  get isMuted(): boolean {
+    return this.muted;
+  }
+
+  toggleMute(): boolean {
+    this.muted = !this.muted;
+    localStorage.setItem('audio-muted', String(this.muted));
+    if (this.muted) {
+      this.scene.sound.pauseAll();
+    } else {
+      this.scene.sound.resumeAll();
+    }
+    return this.muted;
   }
 
   /**
@@ -29,6 +46,9 @@ export class AudioManager implements MusicControl {
     } = config;
 
     this.stopAll();
+
+    // No reproducir si está muteado
+    if (this.muted) return;
 
     if (introKey) {
       this.playIntroThenMain(
