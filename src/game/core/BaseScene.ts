@@ -1,24 +1,19 @@
 import Phaser from 'phaser';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
-import { playSceneMusic } from '../music/playSceneMusic';
+import { AudioManager } from './AudioManager';
 import { showCinematicTitle } from '../utils/cinematicTitle';
 import { CAMERA, UI } from '../config/constants';
-import type { MusicControl } from '../types/musicTypes';
+import type { SceneMusicConfig } from '../types/musicTypes';
 
 /**
- * Configuración base para todas las escenas
+ * Configuracion base para todas las escenas
  */
 export interface BaseSceneConfig {
   sceneKey: string;
   title?: string;
   backgroundKey: string;
   backgroundLayers: string[];
-  music?: {
-    introKey?: string;
-    mainKey: string;
-    introVolume?: number;
-    mainVolume?: number;
-  };
+  music?: SceneMusicConfig;
   enableCinematicTitle?: boolean;
   enableBackButton?: boolean;
   returnScene?: string;
@@ -26,16 +21,16 @@ export interface BaseSceneConfig {
 
 /**
  * Clase base para todas las escenas del juego.
- * Proporciona funcionalidad común como:
- * - Fade in/out automático
- * - Gestión de música
+ * Proporciona funcionalidad comun como:
+ * - Fade in/out automatico
+ * - Gestion de musica via AudioManager
  * - Background parallax
- * - Botón de regreso
- * - Título cinemático
+ * - Boton de regreso
+ * - Titulo cinematico
  */
 export abstract class BaseScene extends Phaser.Scene {
   protected config: BaseSceneConfig;
-  protected musicControl?: MusicControl;
+  protected audioManager!: AudioManager;
   protected parallaxBackground?: ParallaxBackground;
   protected backButton?: Phaser.GameObjects.Text;
   protected closeButton?: Phaser.GameObjects.Text;
@@ -58,6 +53,8 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   create() {
+    this.audioManager = new AudioManager(this);
+
     this.setupBackground();
     this.setupMusic();
     this.setupCamera();
@@ -66,7 +63,7 @@ export abstract class BaseScene extends Phaser.Scene {
       showCinematicTitle(this, this.config.title);
     }
 
-    // Inicializar el contenido específico de la escena
+    // Inicializar el contenido especifico de la escena
     this.initializeContent();
 
     if (this.config.enableBackButton && this.config.returnScene) {
@@ -88,22 +85,16 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Configura la música de la escena
+   * Configura la musica de la escena via AudioManager
    */
   private setupMusic() {
     if (this.config.music) {
-      this.musicControl = playSceneMusic(this, {
-        introKey: this.config.music.introKey,
-        mainKey: this.config.music.mainKey,
-        introVolume: this.config.music.introVolume,
-        mainVolume: this.config.music.mainVolume,
-        fadeDuration: 0,
-      });
+      this.audioManager.playSceneMusic(this.config.music);
     }
   }
 
   /**
-   * Configura el fade in de la cámara
+   * Configura el fade in de la camara
    */
   private setupCamera() {
     const { r, g, b } = CAMERA.fadeIn.rgb;
@@ -115,19 +106,19 @@ export abstract class BaseScene extends Phaser.Scene {
    */
   private setupCleanup() {
     this.events.once('shutdown', () => {
-      this.musicControl?.stopAll();
+      this.audioManager.stopAll();
       this.cleanupResources();
     });
   }
 
   /**
-   * Crea el botón de cierre (X)
+   * Crea el boton de cierre (X)
    */
   protected createCloseButton() {
     const { width } = this.cameras.main;
 
     this.closeButton = this.add
-      .text(width - 30, 30, '✕', {
+      .text(width - 30, 30, '\u2715', {
         fontSize: '32px',
         fontFamily: 'Arial',
         color: UI.button.color,
@@ -143,13 +134,13 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Crea el botón de regreso
+   * Crea el boton de regreso
    */
   protected createBackButton() {
     const { width, height } = this.cameras.main;
 
     this.backButton = this.add
-      .text(width - 180, height - 60, '← Volver', {
+      .text(width - 180, height - 60, '\u2190 Volver', {
         fontSize: UI.button.fontSize,
         fontFamily: 'Georgia, serif',
         backgroundColor: UI.button.backgroundColor,
@@ -163,9 +154,9 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Configura las interacciones de un botón (hover, click)
+   * Configura las interacciones de un boton (hover, click)
    */
-  private setupButtonInteractions(
+  protected setupButtonInteractions(
     button: Phaser.GameObjects.Text,
     onClick: () => void
   ) {
@@ -196,7 +187,7 @@ export abstract class BaseScene extends Phaser.Scene {
    * Sale de la escena con fade out
    */
   protected exitScene() {
-    this.musicControl?.stopAll();
+    this.audioManager.stopAll();
     this.cleanupResources();
 
     const { r, g, b } = CAMERA.fadeOut.rgb;
@@ -209,10 +200,10 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Transición a otra escena
+   * Transicion a otra escena
    */
   protected transitionToScene(targetScene: string) {
-    this.musicControl?.stopAll();
+    this.audioManager.stopAll();
 
     const { r, g, b } = CAMERA.fadeOut.rgb;
     this.cameras.main.fadeOut(CAMERA.fadeOut.duration, r, g, b);
@@ -222,7 +213,7 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Obtiene el tamaño de la cámara
+   * Obtiene el tamano de la camara
    */
   protected getCameraSize() {
     return {
@@ -232,7 +223,14 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Calcula la escala óptima para una imagen
+   * Detiene todo el audio de la escena (accesible externamente)
+   */
+  public stopAudio(): void {
+    this.audioManager.stopAll();
+  }
+
+  /**
+   * Calcula la escala optima para una imagen
    */
   protected calculateScale(
     textureKey: string,

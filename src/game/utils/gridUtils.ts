@@ -66,6 +66,8 @@ export function createAlignedGrid(
           clickScale: 0.92,
           soundKeys: { hover: hoverSound, click: clickSound },
         });
+
+        gridElements.push(icon);
       }
 
       i++;

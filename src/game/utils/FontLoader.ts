@@ -48,12 +48,6 @@ export class FontLoader {
         document.body.removeChild(testElement);
         this.loadedFonts.add(fontName);
 
-        if (fontAvailable) {
-          console.log(`Font ${fontName} loaded successfully`);
-        } else {
-          console.warn(`Font ${fontName} failed to load, using fallback`);
-        }
-
         scene.time.delayedCall(100, callback);
       } else {
         scene.time.delayedCall(100, checkFont);

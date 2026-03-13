@@ -1,45 +1,27 @@
 import Phaser from 'phaser';
 import { AUDIO } from '../config/constants';
-
-export type AudioKey = string;
-
-export interface AudioConfig {
-  key: AudioKey;
-  volume?: number;
-  loop?: boolean;
-  fadeDuration?: number;
-}
-
-export interface MusicConfig {
-  introKey?: AudioKey;
-  mainKey: AudioKey;
-  introVolume?: number;
-  mainVolume?: number;
-  delay?: number;
-  fadeDuration?: number;
-}
+import type { MusicControl, SceneMusicConfig } from '../types/musicTypes';
 
 /**
- * Gestor centralizado de audio para el juego
- * Maneja música de fondo, efectos de sonido y transiciones
+ * Gestor centralizado de audio para el juego.
+ * Reemplaza playSceneMusic.ts como fuente unica de logica de audio.
  */
-export class AudioManager {
+export class AudioManager implements MusicControl {
   private scene: Phaser.Scene;
   private currentMusic: Phaser.Sound.BaseSound | null = null;
-  private activeSounds: Map<string, Phaser.Sound.BaseSound> = new Map();
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
   }
 
   /**
-   * Reproduce música de escena con intro opcional
+   * Reproduce musica de escena con intro opcional
    */
-  playSceneMusic(config: MusicConfig): void {
+  playSceneMusic(config: SceneMusicConfig): void {
     const {
       introKey,
       mainKey,
-      introVolume = AUDIO.volume.music,
+      introVolume = AUDIO.volume.intro,
       mainVolume = AUDIO.volume.music,
       delay = 50,
       fadeDuration = AUDIO.fadeDuration,
@@ -61,11 +43,8 @@ export class AudioManager {
     }
   }
 
-  /**
-   * Reproduce música principal con fade in
-   */
   private playMainMusic(
-    key: AudioKey,
+    key: string,
     volume: number,
     fadeDuration: number
   ): void {
@@ -79,12 +58,9 @@ export class AudioManager {
     });
   }
 
-  /**
-   * Reproduce intro y luego música principal
-   */
   private playIntroThenMain(
-    introKey: AudioKey,
-    mainKey: AudioKey,
+    introKey: string,
+    mainKey: string,
     introVolume: number,
     mainVolume: number,
     delay: number,
@@ -103,19 +79,18 @@ export class AudioManager {
   /**
    * Reproduce un efecto de sonido
    */
-  playSFX(key: AudioKey, volume?: number): void {
+  playSFX(key: string, volume?: number): void {
     const sfxVolume = volume ?? AUDIO.volume.sfx.hover;
     const sound = this.scene.sound.add(key, { volume: sfxVolume });
     sound.play();
 
-    // Limpiar después de reproducir
     sound.once('complete', () => {
       sound.destroy();
     });
   }
 
   /**
-   * Detiene toda la música con fade out
+   * Detiene toda la musica con fade out
    */
   stopAll(fadeDuration: number = AUDIO.fadeDuration): void {
     if (this.currentMusic && this.currentMusic.isPlaying) {
@@ -131,61 +106,7 @@ export class AudioManager {
       });
     }
 
-    // Detener todos los sonidos activos
     this.scene.sound.stopAll();
-    this.activeSounds.clear();
-  }
-
-  /**
-   * Pausa la música actual
-   */
-  pauseMusic(): void {
-    if (this.currentMusic && this.currentMusic.isPlaying) {
-      (this.currentMusic as Phaser.Sound.WebAudioSound).pause();
-    }
-  }
-
-  /**
-   * Reanuda la música pausada
-   */
-  resumeMusic(): void {
-    if (this.currentMusic && this.currentMusic.isPaused) {
-      (this.currentMusic as Phaser.Sound.WebAudioSound).resume();
-    }
-  }
-
-  /**
-   * Cambia el volumen de la música actual
-   */
-  setMusicVolume(volume: number, duration: number = 500): void {
-    if (this.currentMusic) {
-      this.scene.tweens.add({
-        targets: this.currentMusic,
-        volume: volume,
-        duration: duration,
-        ease: 'Linear',
-      });
-    }
-  }
-
-  /**
-   * Verifica si hay música reproduciéndose
-   */
-  isMusicPlaying(): boolean {
-    return this.currentMusic !== null && this.currentMusic.isPlaying;
-  }
-
-  /**
-   * Obtiene el volumen actual de la música
-   */
-  getCurrentVolume(): number {
-    if (!this.currentMusic) return 0;
-
-    // Type assertion seguro: BaseSound siempre tiene volume
-    const sound = this.currentMusic as
-      | Phaser.Sound.WebAudioSound
-      | Phaser.Sound.HTML5AudioSound;
-    return sound.volume;
   }
 
   /**
@@ -193,14 +114,6 @@ export class AudioManager {
    */
   destroy(): void {
     this.stopAll(0);
-    this.activeSounds.clear();
     this.currentMusic = null;
   }
-}
-
-/**
- * Hook para usar AudioManager en escenas
- */
-export function useAudioManager(scene: Phaser.Scene): AudioManager {
-  return new AudioManager(scene);
 }

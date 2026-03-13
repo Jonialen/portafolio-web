@@ -43,10 +43,8 @@ export class MainScene extends BaseScene {
       'crystalBall',
     ]);
 
-    // Cargar audio
-    this.load.audio(AUDIO_FILES.music.mainTheme.key, [
-      ...AUDIO_FILES.music.mainTheme.paths,
-    ]);
+    // Cargar audio (centralizado)
+    AssetLoader.loadAudio(this);
   }
 
   protected initializeContent(): void {

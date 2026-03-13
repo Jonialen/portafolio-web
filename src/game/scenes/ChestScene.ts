@@ -44,15 +44,8 @@ export class ChestScene extends BaseScene {
     // Cargar iconos de proyectos
     AssetLoader.loadProjectIcons(this);
 
-    // Cargar audio
-    this.load.audio(AUDIO_FILES.music.second.key, [
-      ...AUDIO_FILES.music.second.paths,
-    ]);
-    this.load.audio(AUDIO_FILES.music.introSong.key, [
-      ...AUDIO_FILES.music.introSong.paths,
-    ]);
-    this.load.audio(AUDIO_FILES.sfx.hover.key, AUDIO_FILES.sfx.hover.path);
-    this.load.audio(AUDIO_FILES.sfx.click.key, AUDIO_FILES.sfx.click.path);
+    // Cargar audio (centralizado)
+    AssetLoader.loadAudio(this);
   }
 
   protected initializeContent(): void {

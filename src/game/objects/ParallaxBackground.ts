@@ -33,9 +33,6 @@ export class ParallaxBackground {
   setLayerDepths(startDepth: number = -10) {
     this.capas.forEach((capa, index) => {
       capa.setDepth(startDepth + index);
-      console.log(
-        `Capa ${capa.texture.key} depth ajustado a: ${startDepth + index}`
-      );
     });
   }
 }

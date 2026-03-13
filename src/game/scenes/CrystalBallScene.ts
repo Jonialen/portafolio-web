@@ -46,13 +46,8 @@ export class CrystalBallScene extends BaseScene {
     // Cargar iconos de contacto
     AssetLoader.loadContactIcons(this);
 
-    // Cargar audio
-    this.load.audio(AUDIO_FILES.music.second.key, [
-      ...AUDIO_FILES.music.second.paths,
-    ]);
-    this.load.audio(AUDIO_FILES.music.introSong.key, [
-      ...AUDIO_FILES.music.introSong.paths,
-    ]);
+    // Cargar audio (centralizado)
+    AssetLoader.loadAudio(this);
   }
 
   protected initializeContent(): void {

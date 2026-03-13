@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { showTooltip, hideTooltip } from './tooltipUtils';
+import { ANIMATION, AUDIO } from '../config/constants';
 
 export interface IconInteractionConfig {
   scene: Phaser.Scene;
@@ -13,9 +14,9 @@ export interface IconInteractionConfig {
     hover?: string;
     click?: string;
   };
-  hoverScale?: number; // default: 1.1
-  hoverDuration?: number; // default: 200ms
-  clickScale?: number; // default: 0.95 (bump)
+  hoverScale?: number;
+  hoverDuration?: number;
+  clickScale?: number;
 }
 
 export function setupIconInteractions({
@@ -23,9 +24,9 @@ export function setupIconInteractions({
   icon,
   project,
   soundKeys = {},
-  hoverScale = 1.1,
-  hoverDuration = 200,
-  clickScale = 0.95,
+  hoverScale = ANIMATION.hover.scale,
+  hoverDuration = ANIMATION.hover.duration,
+  clickScale = ANIMATION.click.scale,
 }: IconInteractionConfig) {
   icon.setInteractive({ useHandCursor: true });
 
@@ -39,9 +40,10 @@ export function setupIconInteractions({
       ease: 'Sine.easeOut',
     });
 
-    icon.setTint(0xffffcc);
+    icon.setTint(ANIMATION.hover.tint);
     showTooltip(scene, icon.x, icon.y, project.name, project.description);
-    if (soundKeys.hover) scene.sound.play(soundKeys.hover, { volume: 0.3 });
+    if (soundKeys.hover)
+      scene.sound.play(soundKeys.hover, { volume: AUDIO.volume.sfx.hover });
   });
 
   icon.on('pointerout', () => {
@@ -59,12 +61,13 @@ export function setupIconInteractions({
     scene.tweens.add({
       targets: icon,
       scale: originalScale * clickScale,
-      duration: 80,
+      duration: ANIMATION.click.duration,
       yoyo: true,
-      ease: 'Quad.easeOut',
+      ease: ANIMATION.click.ease,
     });
 
-    if (soundKeys.click) scene.sound.play(soundKeys.click, { volume: 0.5 });
+    if (soundKeys.click)
+      scene.sound.play(soundKeys.click, { volume: AUDIO.volume.sfx.click });
     project.onClick?.();
   });
 }

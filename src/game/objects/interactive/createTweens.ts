@@ -1,4 +1,5 @@
 import type Phaser from 'phaser';
+import { ANIMATION } from '../../config/constants';
 
 export function createLoopTweens(
   scene: Phaser.Scene,
@@ -10,31 +11,31 @@ export function createLoopTweens(
 ) {
   const shadowTween = scene.tweens.add({
     targets: shadow,
-    scaleX: 1.01,
-    scaleY: 0.99,
-    duration: 2000,
+    scaleX: ANIMATION.breathing.scale,
+    scaleY: 1 / ANIMATION.breathing.scale,
+    duration: ANIMATION.breathing.duration,
     yoyo: true,
     repeat: -1,
-    ease: 'Sine.easeInOut',
+    ease: ANIMATION.breathing.ease,
   });
 
   const breathingTween = scene.tweens.add({
     targets: sprite,
-    scaleX: scale * 1.02,
-    scaleY: scale * 1.02,
-    duration: 2000,
+    scaleX: scale * ANIMATION.breathing.scale,
+    scaleY: scale * ANIMATION.breathing.scale,
+    duration: ANIMATION.breathing.duration,
     yoyo: true,
     repeat: -1,
-    ease: 'Sine.easeInOut',
+    ease: ANIMATION.breathing.ease,
   });
 
   const floatingTween = scene.tweens.add({
     targets: sprite,
-    y: y - 5,
-    duration: 3000,
+    y: y - ANIMATION.floating.offset,
+    duration: ANIMATION.floating.duration,
     yoyo: true,
     repeat: -1,
-    ease: 'Sine.easeInOut',
+    ease: ANIMATION.floating.ease,
     onUpdate: () => {
       shadow.y = sprite.y + showPosY;
     },

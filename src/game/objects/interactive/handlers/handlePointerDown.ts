@@ -1,17 +1,15 @@
-interface MusicControl {
-  stopAll: () => void;
-}
+import { CAMERA } from '../../../config/constants';
 
-interface SceneWithMusic extends Phaser.Scene {
-  musicControl?: MusicControl;
+interface SceneWithAudio extends Phaser.Scene {
+  stopAudio?: () => void;
 }
 
 export function handlePointerDown(scene: Phaser.Scene, targetScene: string) {
-  const sceneWithMusic = scene as SceneWithMusic;
-  if (sceneWithMusic.musicControl) {
-    sceneWithMusic.musicControl.stopAll();
-  }
-  scene.cameras.main.fadeOut(800, 0, 0, 0);
+  const sceneWithAudio = scene as SceneWithAudio;
+  sceneWithAudio.stopAudio?.();
+
+  const { r, g, b } = CAMERA.fadeOut.rgb;
+  scene.cameras.main.fadeOut(CAMERA.fadeOut.duration, r, g, b);
   scene.cameras.main.once('camerafadeoutcomplete', () => {
     scene.scene.start(targetScene);
   });
