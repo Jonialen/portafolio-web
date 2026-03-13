@@ -5,8 +5,10 @@ import {
   IMAGES,
   AUDIO_FILES,
 } from '../config/assets';
-import { ANIMATION } from '../config/constants';
-import { contactItems } from '../data/contactItems';
+import { getContactItems } from '../data/contactItems';
+import type { ContactItem } from '../data/contactItems';
+import { addBreathingAnimation } from '../utils/animationUtils';
+import { i18n } from '../i18n';
 
 /**
  * Escena de la bola de cristal (CrystalBallScene)
@@ -17,6 +19,7 @@ export class CrystalBallScene extends BaseScene {
   private currentIndex = 0;
   private displayIcon!: Phaser.GameObjects.Image;
   private displayText!: Phaser.GameObjects.Text;
+  private items: ContactItem[] = [];
 
   constructor() {
     super({
@@ -37,6 +40,8 @@ export class CrystalBallScene extends BaseScene {
   }
 
   preload() {
+    super.preload();
+
     // Cargar background
     AssetLoader.loadBackground(this, 'forestDark');
 
@@ -46,16 +51,14 @@ export class CrystalBallScene extends BaseScene {
     // Cargar iconos de contacto
     AssetLoader.loadContactIcons(this);
 
-    // Cargar audio
-    this.load.audio(AUDIO_FILES.music.second.key, [
-      ...AUDIO_FILES.music.second.paths,
-    ]);
-    this.load.audio(AUDIO_FILES.music.introSong.key, [
-      ...AUDIO_FILES.music.introSong.paths,
-    ]);
+    // Cargar audio (centralizado)
+    AssetLoader.loadAudio(this);
   }
 
   protected initializeContent(): void {
+    // Update title with current language
+    this.config.title = i18n.t.scenes.crystalBall;
+    this.items = getContactItems();
     this.createCrystalDisplay();
   }
 
@@ -72,15 +75,7 @@ export class CrystalBallScene extends BaseScene {
     crystalInside.setScale(scale);
 
     // Agregar animación de respiración
-    this.respirationTween = this.tweens.add({
-      targets: crystalInside,
-      scaleX: scale * ANIMATION.breathing.scale,
-      scaleY: scale * ANIMATION.breathing.scale,
-      duration: ANIMATION.breathing.duration,
-      yoyo: true,
-      repeat: -1,
-      ease: ANIMATION.breathing.ease,
-    });
+    this.respirationTween = addBreathingAnimation(this, crystalInside);
 
     // Crear interfaz de contacto
     this.createContactInterface(crystalInside);
@@ -112,13 +107,13 @@ export class CrystalBallScene extends BaseScene {
     // Flecha izquierda
     const leftArrow = this.createArrow(-150, 150, '<', () => {
       this.currentIndex =
-        (this.currentIndex - 1 + contactItems.length) % contactItems.length;
+        (this.currentIndex - 1 + this.items.length) % this.items.length;
       this.updateContactItem();
     });
 
     // Flecha derecha
     const rightArrow = this.createArrow(150, 150, '>', () => {
-      this.currentIndex = (this.currentIndex + 1) % contactItems.length;
+      this.currentIndex = (this.currentIndex + 1) % this.items.length;
       this.updateContactItem();
     });
 
@@ -132,7 +127,7 @@ export class CrystalBallScene extends BaseScene {
 
     // Click en icono para ejecutar acción
     this.displayIcon.on('pointerdown', () => {
-      const item = contactItems[this.currentIndex];
+      const item = this.items[this.currentIndex];
       item.action();
     });
 
@@ -164,7 +159,7 @@ export class CrystalBallScene extends BaseScene {
   }
 
   private updateContactItem() {
-    const item = contactItems[this.currentIndex];
+    const item = this.items[this.currentIndex];
 
     this.tweens.add({
       targets: [this.displayIcon, this.displayText],

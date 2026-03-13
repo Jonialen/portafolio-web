@@ -1,24 +1,21 @@
 import Phaser from 'phaser';
 import { ParallaxBackground } from '../objects/ParallaxBackground';
-import { playSceneMusic } from '../music/playSceneMusic';
+import { AudioManager } from './AudioManager';
 import { showCinematicTitle } from '../utils/cinematicTitle';
-import { CAMERA, UI } from '../config/constants';
-import type { MusicControl } from '../types/musicTypes';
+import { CAMERA, DEPTH, UI } from '../config/constants';
+import { i18n } from '../i18n';
+import type { SceneMusicConfig } from '../types/musicTypes';
+import type { BackgroundLayer } from '../config/assets';
 
 /**
- * Configuración base para todas las escenas
+ * Configuracion base para todas las escenas
  */
 export interface BaseSceneConfig {
   sceneKey: string;
   title?: string;
   backgroundKey: string;
-  backgroundLayers: string[];
-  music?: {
-    introKey?: string;
-    mainKey: string;
-    introVolume?: number;
-    mainVolume?: number;
-  };
+  backgroundLayers: BackgroundLayer[];
+  music?: SceneMusicConfig;
   enableCinematicTitle?: boolean;
   enableBackButton?: boolean;
   returnScene?: string;
@@ -26,19 +23,20 @@ export interface BaseSceneConfig {
 
 /**
  * Clase base para todas las escenas del juego.
- * Proporciona funcionalidad común como:
- * - Fade in/out automático
- * - Gestión de música
+ * Proporciona funcionalidad comun como:
+ * - Fade in/out automatico
+ * - Gestion de musica via AudioManager
  * - Background parallax
- * - Botón de regreso
- * - Título cinemático
+ * - Boton de regreso
+ * - Titulo cinematico
  */
 export abstract class BaseScene extends Phaser.Scene {
   protected config: BaseSceneConfig;
-  protected musicControl?: MusicControl;
+  protected audioManager!: AudioManager;
   protected parallaxBackground?: ParallaxBackground;
   protected backButton?: Phaser.GameObjects.Text;
   protected closeButton?: Phaser.GameObjects.Text;
+  protected muteButton?: Phaser.GameObjects.Text;
 
   constructor(config: BaseSceneConfig) {
     super({ key: config.sceneKey });
@@ -57,7 +55,33 @@ export abstract class BaseScene extends Phaser.Scene {
     // Las escenas hijas pueden sobrescribir esto
   }
 
+  preload() {
+    // Handler global para errores de carga de assets
+    this.load.on('loaderror', (fileObj: Phaser.Loader.File) => {
+      console.error(
+        `[AssetError] Error cargando: ${fileObj.key} (${fileObj.url})`
+      );
+
+      // Mostrar mensaje al usuario cuando la escena esté lista
+      this.events.once('create', () => {
+        const { width, height } = this.cameras.main;
+        this.add
+          .text(width / 2, height - 40, i18n.t.ui.loadError, {
+            fontSize: '16px',
+            fontFamily: 'Arial, sans-serif',
+            color: '#ff4444',
+            backgroundColor: '#000000cc',
+            padding: { x: 12, y: 6 },
+          })
+          .setOrigin(0.5)
+          .setDepth(1000);
+      });
+    });
+  }
+
   create() {
+    this.audioManager = new AudioManager(this);
+
     this.setupBackground();
     this.setupMusic();
     this.setupCamera();
@@ -66,13 +90,23 @@ export abstract class BaseScene extends Phaser.Scene {
       showCinematicTitle(this, this.config.title);
     }
 
-    // Inicializar el contenido específico de la escena
+    // Inicializar el contenido especifico de la escena
     this.initializeContent();
+
+    // Crear botón de mute/unmute
+    this.createMuteButton();
 
     if (this.config.enableBackButton && this.config.returnScene) {
       this.createBackButton();
       this.createCloseButton();
     }
+
+    // Notify React about scene state (sub-scene active or not)
+    window.dispatchEvent(
+      new CustomEvent('phaser-scene-change', {
+        detail: { isSubScene: !!this.config.enableBackButton },
+      })
+    );
 
     this.setupCleanup();
   }
@@ -88,22 +122,16 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Configura la música de la escena
+   * Configura la musica de la escena via AudioManager
    */
   private setupMusic() {
     if (this.config.music) {
-      this.musicControl = playSceneMusic(this, {
-        introKey: this.config.music.introKey,
-        mainKey: this.config.music.mainKey,
-        introVolume: this.config.music.introVolume,
-        mainVolume: this.config.music.mainVolume,
-        fadeDuration: 0,
-      });
+      this.audioManager.playSceneMusic(this.config.music);
     }
   }
 
   /**
-   * Configura el fade in de la cámara
+   * Configura el fade in de la camara
    */
   private setupCamera() {
     const { r, g, b } = CAMERA.fadeIn.rgb;
@@ -111,23 +139,25 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Configura la limpieza de recursos al salir
+   * Configura la limpieza de recursos al salir.
+   * Usa destroy() (inmediato) en lugar de stopAll() (tween-based)
+   * porque los tweens son destruidos cuando la escena hace shutdown.
    */
   private setupCleanup() {
     this.events.once('shutdown', () => {
-      this.musicControl?.stopAll();
+      this.audioManager.destroy();
       this.cleanupResources();
     });
   }
 
   /**
-   * Crea el botón de cierre (X)
+   * Crea el boton de cierre (X)
    */
   protected createCloseButton() {
     const { width } = this.cameras.main;
 
     this.closeButton = this.add
-      .text(width - 30, 30, '✕', {
+      .text(width - 30, 30, '\u2715', {
         fontSize: '32px',
         fontFamily: 'Arial',
         color: UI.button.color,
@@ -137,19 +167,51 @@ export abstract class BaseScene extends Phaser.Scene {
       .setOrigin(1, 0)
       .setInteractive({ useHandCursor: true })
       .setAlpha(UI.button.normalAlpha)
-      .setDepth(UI.button.depth || 100);
+      .setDepth(UI.button.depth);
 
     this.setupButtonInteractions(this.closeButton, () => this.exitScene());
   }
 
   /**
-   * Crea el botón de regreso
+   * Crea el boton de mute/unmute
+   */
+  protected createMuteButton() {
+    const label = this.audioManager.isMuted ? '\ud83d\udd07' : '\ud83d\udd0a';
+
+    this.muteButton = this.add
+      .text(70, 30, label, {
+        fontSize: '28px',
+        fontFamily: 'Arial',
+        backgroundColor: UI.button.backgroundColor,
+        color: UI.button.color,
+        padding: { x: 10, y: 6 },
+      })
+      .setOrigin(0.5, 0)
+      .setScrollFactor(0)
+      .setDepth(DEPTH.ui)
+      .setInteractive({ useHandCursor: true })
+      .setAlpha(UI.button.normalAlpha);
+
+    this.muteButton.on('pointerover', () =>
+      this.muteButton?.setAlpha(UI.button.hoverAlpha)
+    );
+    this.muteButton.on('pointerout', () =>
+      this.muteButton?.setAlpha(UI.button.normalAlpha)
+    );
+    this.muteButton.on('pointerdown', () => {
+      const muted = this.audioManager.toggleMute();
+      this.muteButton?.setText(muted ? '\ud83d\udd07' : '\ud83d\udd0a');
+    });
+  }
+
+  /**
+   * Crea el boton de regreso
    */
   protected createBackButton() {
     const { width, height } = this.cameras.main;
 
     this.backButton = this.add
-      .text(width - 180, height - 60, '← Volver', {
+      .text(width - 180, height - 60, i18n.t.ui.back, {
         fontSize: UI.button.fontSize,
         fontFamily: 'Georgia, serif',
         backgroundColor: UI.button.backgroundColor,
@@ -163,9 +225,9 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Configura las interacciones de un botón (hover, click)
+   * Configura las interacciones de un boton (hover, click)
    */
-  private setupButtonInteractions(
+  protected setupButtonInteractions(
     button: Phaser.GameObjects.Text,
     onClick: () => void
   ) {
@@ -193,10 +255,11 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Sale de la escena con fade out
+   * Sale de la escena con fade out.
+   * No llama stopAll() directamente — el shutdown handler usa destroy()
+   * para detener el audio de forma inmediata cuando scene.start() se ejecuta.
    */
   protected exitScene() {
-    this.musicControl?.stopAll();
     this.cleanupResources();
 
     const { r, g, b } = CAMERA.fadeOut.rgb;
@@ -209,11 +272,10 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Transición a otra escena
+   * Transicion a otra escena.
+   * El audio se detiene automaticamente en el shutdown handler.
    */
   protected transitionToScene(targetScene: string) {
-    this.musicControl?.stopAll();
-
     const { r, g, b } = CAMERA.fadeOut.rgb;
     this.cameras.main.fadeOut(CAMERA.fadeOut.duration, r, g, b);
     this.cameras.main.once('camerafadeoutcomplete', () => {
@@ -222,7 +284,7 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Obtiene el tamaño de la cámara
+   * Obtiene el tamano de la camara
    */
   protected getCameraSize() {
     return {
@@ -232,7 +294,7 @@ export abstract class BaseScene extends Phaser.Scene {
   }
 
   /**
-   * Calcula la escala óptima para una imagen
+   * Calcula la escala optima para una imagen
    */
   protected calculateScale(
     textureKey: string,

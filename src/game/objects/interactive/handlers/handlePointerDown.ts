@@ -1,17 +1,12 @@
-interface MusicControl {
-  stopAll: () => void;
-}
-
-interface SceneWithMusic extends Phaser.Scene {
-  musicControl?: MusicControl;
-}
+import { CAMERA } from '../../../config/constants';
 
 export function handlePointerDown(scene: Phaser.Scene, targetScene: string) {
-  const sceneWithMusic = scene as SceneWithMusic;
-  if (sceneWithMusic.musicControl) {
-    sceneWithMusic.musicControl.stopAll();
-  }
-  scene.cameras.main.fadeOut(800, 0, 0, 0);
+  // No llamar stopAudio() aqui: el fade tween seria destruido por scene.start()
+  // antes de completar. El shutdown handler de BaseScene llama audioManager.destroy()
+  // que detiene todo de forma inmediata cuando la escena se apaga.
+
+  const { r, g, b } = CAMERA.fadeOut.rgb;
+  scene.cameras.main.fadeOut(CAMERA.fadeOut.duration, r, g, b);
   scene.cameras.main.once('camerafadeoutcomplete', () => {
     scene.scene.start(targetScene);
   });

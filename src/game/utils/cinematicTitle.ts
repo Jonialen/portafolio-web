@@ -1,30 +1,39 @@
 import Phaser from 'phaser';
+import { UI, DEPTH } from '../config/constants';
 
 export function showCinematicTitle(scene: Phaser.Scene, title: string) {
   const { width, height } = scene.cameras.main;
+  const { overlay: overlayConfig, title: titleConfig } = UI.cinematic;
 
   const overlay = scene.add
-    .rectangle(width / 2, height / 2, width, height, 0x000000, 0.85)
-    .setDepth(1000)
+    .rectangle(
+      width / 2,
+      height / 2,
+      width,
+      height,
+      overlayConfig.color,
+      overlayConfig.alpha
+    )
+    .setDepth(DEPTH.overlay)
     .setAlpha(1);
 
   const titleText = scene.add
     .text(width / 2, height / 2, title, {
-      fontSize: '48px',
-      fontFamily: 'serif',
-      color: '#ffffff',
-      stroke: '#000000',
-      strokeThickness: 6,
+      fontSize: titleConfig.fontSize,
+      fontFamily: titleConfig.fontFamily,
+      color: titleConfig.color,
+      stroke: titleConfig.stroke,
+      strokeThickness: titleConfig.strokeThickness,
     })
     .setOrigin(0.5)
-    .setDepth(1001)
+    .setDepth(DEPTH.overlay + 1)
     .setAlpha(1);
 
-  scene.time.delayedCall(1200, () => {
+  scene.time.delayedCall(UI.cinematic.displayDuration, () => {
     scene.tweens.add({
       targets: [overlay, titleText],
       alpha: 0,
-      duration: 2000,
+      duration: UI.cinematic.fadeOutDuration,
       ease: 'Sine.easeInOut',
       onComplete: () => {
         overlay.destroy();

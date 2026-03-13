@@ -27,12 +27,14 @@ export function handlePointerOut(ctx: InteractiveObjectContext) {
   floatingTween.resume();
   shadowTween.resume();
 
+  const scale = config.scale ?? 1;
+
   if (altSprite) {
     altSprite.setVisible(false).setAlpha(0);
-    sprite.setAlpha(1).setScale(config.scale);
+    sprite.setAlpha(1).setScale(scale);
   } else {
     scene.tweens.add({ targets: sprite, duration: 200, tint: 0xffffff });
-    sprite.setScale(config.scale);
+    sprite.setScale(scale);
   }
 
   scene.tweens.add({

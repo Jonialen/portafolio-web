@@ -1,51 +1,54 @@
 import Phaser from 'phaser';
 import { AUDIO } from '../config/constants';
-
-export type AudioKey = string;
-
-export interface AudioConfig {
-  key: AudioKey;
-  volume?: number;
-  loop?: boolean;
-  fadeDuration?: number;
-}
-
-export interface MusicConfig {
-  introKey?: AudioKey;
-  mainKey: AudioKey;
-  introVolume?: number;
-  mainVolume?: number;
-  delay?: number;
-  fadeDuration?: number;
-}
+import type { MusicControl, SceneMusicConfig } from '../types/musicTypes';
 
 /**
- * Gestor centralizado de audio para el juego
- * Maneja música de fondo, efectos de sonido y transiciones
+ * Gestor centralizado de audio para el juego.
+ * Reemplaza playSceneMusic.ts como fuente unica de logica de audio.
  */
-export class AudioManager {
+export class AudioManager implements MusicControl {
   private scene: Phaser.Scene;
   private currentMusic: Phaser.Sound.BaseSound | null = null;
-  private activeSounds: Map<string, Phaser.Sound.BaseSound> = new Map();
+  private introSound: Phaser.Sound.BaseSound | null = null;
+  private muted: boolean;
 
   constructor(scene: Phaser.Scene) {
     this.scene = scene;
+    this.muted = localStorage.getItem('audio-muted') === 'true';
+  }
+
+  get isMuted(): boolean {
+    return this.muted;
+  }
+
+  toggleMute(): boolean {
+    this.muted = !this.muted;
+    localStorage.setItem('audio-muted', String(this.muted));
+    if (this.muted) {
+      this.scene.sound.pauseAll();
+    } else {
+      this.scene.sound.resumeAll();
+    }
+    return this.muted;
   }
 
   /**
-   * Reproduce música de escena con intro opcional
+   * Reproduce musica de escena con intro opcional
    */
-  playSceneMusic(config: MusicConfig): void {
+  playSceneMusic(config: SceneMusicConfig): void {
     const {
       introKey,
       mainKey,
-      introVolume = AUDIO.volume.music,
+      introVolume = AUDIO.volume.intro,
       mainVolume = AUDIO.volume.music,
       delay = 50,
       fadeDuration = AUDIO.fadeDuration,
     } = config;
 
     this.stopAll();
+
+    // No reproducir si está muteado
+    if (this.muted) return;
 
     if (introKey) {
       this.playIntroThenMain(
@@ -61,11 +64,8 @@ export class AudioManager {
     }
   }
 
-  /**
-   * Reproduce música principal con fade in
-   */
   private playMainMusic(
-    key: AudioKey,
+    key: string,
     volume: number,
     fadeDuration: number
   ): void {
@@ -79,21 +79,19 @@ export class AudioManager {
     });
   }
 
-  /**
-   * Reproduce intro y luego música principal
-   */
   private playIntroThenMain(
-    introKey: AudioKey,
-    mainKey: AudioKey,
+    introKey: string,
+    mainKey: string,
     introVolume: number,
     mainVolume: number,
     delay: number,
     fadeDuration: number
   ): void {
-    const intro = this.scene.sound.add(introKey, { volume: introVolume });
-    intro.play();
+    this.introSound = this.scene.sound.add(introKey, { volume: introVolume });
+    this.introSound.play();
 
-    intro.once('complete', () => {
+    this.introSound.once('complete', () => {
+      this.introSound = null;
       this.scene.time.delayedCall(delay, () => {
         this.playMainMusic(mainKey, mainVolume, fadeDuration);
       });
@@ -103,104 +101,67 @@ export class AudioManager {
   /**
    * Reproduce un efecto de sonido
    */
-  playSFX(key: AudioKey, volume?: number): void {
+  playSFX(key: string, volume?: number): void {
     const sfxVolume = volume ?? AUDIO.volume.sfx.hover;
     const sound = this.scene.sound.add(key, { volume: sfxVolume });
     sound.play();
 
-    // Limpiar después de reproducir
     sound.once('complete', () => {
       sound.destroy();
     });
   }
 
   /**
-   * Detiene toda la música con fade out
+   * Detiene toda la musica con fade out (tween-based).
+   * Solo usar cuando la escena seguira activa el tiempo suficiente
+   * para que el tween complete (ej: fade out de camara antes de scene.start).
    */
   stopAll(fadeDuration: number = AUDIO.fadeDuration): void {
+    this.stopIntro();
+
     if (this.currentMusic && this.currentMusic.isPlaying) {
-      this.scene.tweens.add({
-        targets: this.currentMusic,
-        volume: 0,
-        duration: fadeDuration,
-        onComplete: () => {
-          this.currentMusic?.stop();
-          this.currentMusic?.destroy();
-          this.currentMusic = null;
-        },
-      });
-    }
+      const musicRef = this.currentMusic;
+      this.currentMusic = null;
 
-    // Detener todos los sonidos activos
-    this.scene.sound.stopAll();
-    this.activeSounds.clear();
-  }
-
-  /**
-   * Pausa la música actual
-   */
-  pauseMusic(): void {
-    if (this.currentMusic && this.currentMusic.isPlaying) {
-      (this.currentMusic as Phaser.Sound.WebAudioSound).pause();
+      if (fadeDuration > 0) {
+        this.scene.tweens.add({
+          targets: musicRef,
+          volume: 0,
+          duration: fadeDuration,
+          onComplete: () => {
+            musicRef.stop();
+            musicRef.destroy();
+          },
+        });
+      } else {
+        musicRef.stop();
+        musicRef.destroy();
+      }
     }
   }
 
   /**
-   * Reanuda la música pausada
+   * Detiene el intro sound de forma inmediata
    */
-  resumeMusic(): void {
-    if (this.currentMusic && this.currentMusic.isPaused) {
-      (this.currentMusic as Phaser.Sound.WebAudioSound).resume();
+  private stopIntro(): void {
+    if (this.introSound) {
+      this.introSound.stop();
+      this.introSound.destroy();
+      this.introSound = null;
     }
   }
 
   /**
-   * Cambia el volumen de la música actual
-   */
-  setMusicVolume(volume: number, duration: number = 500): void {
-    if (this.currentMusic) {
-      this.scene.tweens.add({
-        targets: this.currentMusic,
-        volume: volume,
-        duration: duration,
-        ease: 'Linear',
-      });
-    }
-  }
-
-  /**
-   * Verifica si hay música reproduciéndose
-   */
-  isMusicPlaying(): boolean {
-    return this.currentMusic !== null && this.currentMusic.isPlaying;
-  }
-
-  /**
-   * Obtiene el volumen actual de la música
-   */
-  getCurrentVolume(): number {
-    if (!this.currentMusic) return 0;
-
-    // Type assertion seguro: BaseSound siempre tiene volume
-    const sound = this.currentMusic as
-      | Phaser.Sound.WebAudioSound
-      | Phaser.Sound.HTML5AudioSound;
-    return sound.volume;
-  }
-
-  /**
-   * Limpia todos los recursos de audio
+   * Detiene TODOS los sonidos de forma inmediata (sin tweens).
+   * Usar en shutdown handlers donde los tweens seran destruidos.
    */
   destroy(): void {
-    this.stopAll(0);
-    this.activeSounds.clear();
-    this.currentMusic = null;
-  }
-}
+    this.stopIntro();
 
-/**
- * Hook para usar AudioManager en escenas
- */
-export function useAudioManager(scene: Phaser.Scene): AudioManager {
-  return new AudioManager(scene);
+    if (this.currentMusic) {
+      this.currentMusic.stop();
+      this.currentMusic.destroy();
+      this.currentMusic = null;
+    }
+  }
 }

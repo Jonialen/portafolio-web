@@ -3,13 +3,13 @@ import { setupIconInteractions } from './iconInteractions';
 
 export function createAlignedGrid(
   scene: Phaser.Scene,
-  Image: Phaser.GameObjects.Image,
+  containerImage: Phaser.GameObjects.Image,
   items: {
     id: string;
     name: string;
     icon: string;
     description: string;
-    onClick: () => void;
+    onClick?: () => void;
   }[],
   soundKeys = { hover: '', click: '' },
   spriteCols = 9,
@@ -18,7 +18,7 @@ export function createAlignedGrid(
   paddingSprite = 2,
   yOffset = -20
 ): Phaser.GameObjects.GameObject[] {
-  const scale = Image.scale;
+  const scale = containerImage.scale;
   const cellSize = cellSizeSprite * scale;
   const padding = paddingSprite * scale;
 
@@ -33,8 +33,8 @@ export function createAlignedGrid(
   const displayWidth = totalWidth * scale;
   const displayHeight = totalHeight * scale;
 
-  const startX = Image.x - displayWidth / 2;
-  const startY = Image.y - displayHeight + yOffset * scale;
+  const startX = containerImage.x - displayWidth / 2;
+  const startY = containerImage.y - displayHeight + yOffset * scale;
 
   const gridElements: Phaser.GameObjects.GameObject[] = [];
   let i = 0;
@@ -66,6 +66,8 @@ export function createAlignedGrid(
           clickScale: 0.92,
           soundKeys: { hover: hoverSound, click: clickSound },
         });
+
+        gridElements.push(icon);
       }
 
       i++;

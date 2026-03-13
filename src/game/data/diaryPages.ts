@@ -1,21 +1,32 @@
-export const diaryPages = [
-  'Hola, soy Jonathan Alejandro Díaz Tahuite. Desde pequeño me ha fascinado entender cómo funcionan las cosas: desarmarlas, observar cada parte y volver a armarlas con una nueva perspectiva. Esa misma curiosidad me llevó al mundo de la programación.',
+import { i18n } from '../i18n';
+import type { Language } from '../i18n';
 
-  'Me considero una persona autodidacta y constante. Cuando algo me interesa, lo estudio hasta que lo entiendo bien. Así ha sido con Linux, un sistema que últimamente me está atrapando. Personalizar mi propia distro es como armar un entorno que realmente se siente mío.',
+const diaryPagesData: Record<Language, string[]> = {
+  es: [
+    'Soy Jonathan Alejandro D\u00edaz Tahuite, estudiante de 7mo semestre de Ingenier\u00eda en Ciencias de la Computaci\u00f3n en la UVG y desarrollador Full Stack en Revi, una empresa de tecnolog\u00eda para restaurantes. Desde peque\u00f1o me ha fascinado entender c\u00f3mo funcionan las cosas: desarmarlas, observar cada parte y reconstruirlas con una nueva perspectiva. Esa curiosidad me trajo hasta aqu\u00ed.',
 
-  'Estudio Ingeniería en Ciencias de la Computación y Tecnologías de la Información. Pero más allá de los cursos, lo que más me gusta es aplicar lo aprendido en proyectos reales: desde apps móviles hasta scripts en Bash para automatizar tareas aburridas.',
+    'Actualmente trabajo en Revi como desarrollador Full Stack, donde construyo soluciones con React, React Native, Laravel, Vue.js y MySQL. He participado en todo el ciclo de desarrollo: desde el dise\u00f1o de APIs hasta el despliegue con Docker y Jenkins. Esta experiencia me ha ense\u00f1ado a trabajar en equipo, cumplir deadlines y escribir c\u00f3digo que otros puedan mantener.',
 
-  'Soy auxiliar en cursos como Algoritmos y Programación Básica, y también he dado tutorías en distintas áreas. Enseñar me ha hecho más paciente, más claro, y me ha recordado lo importante que es compartir lo que uno aprende.',
+    'En la universidad he sido auxiliar en cursos como Algoritmos y Programaci\u00f3n B\u00e1sica, y he dado tutor\u00edas en diversas \u00e1reas. Ense\u00f1ar me ha hecho m\u00e1s paciente, m\u00e1s claro al comunicar ideas t\u00e9cnicas, y me ha recordado la importancia de compartir conocimiento. M\u00e1s all\u00e1 de las clases, lo que m\u00e1s disfruto es aplicar lo aprendido en proyectos reales.',
 
-  'Me apasiona la programación orientada a objetos, el desarrollo móvil en Kotlin, y los retos técnicos como programar en CUDA. También he trabajado con Arduino y Raspberry Pi, donde el software se encuentra con el mundo físico. Es algo que simplemente me encanta.',
+    'Me apasiona Linux \u2014 uso Arch como mi sistema principal y personalizar mi entorno es una forma de expresi\u00f3n. Tambi\u00e9n me fascina el software libre, los retos t\u00e9cnicos como programar un RayTracer en Rust o trabajar con CUDA, y la intersecci\u00f3n entre software y hardware con Arduino y Raspberry Pi.',
 
-  'Pero no todo en mi vida es código. También me gusta el deporte. Voy al gimnasio, juego balonmano, y disfruto del esfuerzo físico tanto como del mental. El deporte me ayuda a mantener el equilibrio, descargar energía y renovar el enfoque.',
+    'Mi objetivo es seguir creciendo como desarrollador, enfrentando problemas complejos y construyendo soluciones que importen. Si algo me define, es la constancia: cuando algo me interesa, lo estudio hasta dominarlo. Este portafolio es prueba de eso \u2014 un proyecto que combina creatividad, c\u00f3digo limpio y ganas de hacer las cosas diferentes.',
+  ],
+  en: [
+    "I'm Jonathan Alejandro D\u00edaz Tahuite, a 7th-semester Computer Science student at UVG and Full Stack developer at Revi, a restaurant technology company. Since I was little, I've been fascinated by understanding how things work: taking them apart, studying each piece, and rebuilding them with a new perspective. That curiosity brought me here.",
 
-  'Los perros tienen un lugar especial en mi vida. Me encanta su lealtad, su energía, su capacidad de hacerte sonreír incluso en días difíciles. Si pudiera programar una app que entendiera cómo se sienten los perros, ¡lo haría sin pensarlo dos veces!',
+    "I currently work at Revi as a Full Stack developer, where I build solutions with React, React Native, Laravel, Vue.js, and MySQL. I've participated in the full development cycle: from API design to deployment with Docker and Jenkins. This experience has taught me teamwork, meeting deadlines, and writing code that others can maintain.",
 
-  'En mi tiempo libre suelo explorar nuevas tecnologías, crear pequeños proyectos, o simplemente mejorar los que ya tengo. Me gusta sentir que estoy construyendo algo, aunque nadie lo vea aún. Es como escribir una historia poco a poco.',
+    "At university, I've been a teaching assistant for courses like Algorithms and Basic Programming, and I've tutored in various areas. Teaching has made me more patient, clearer in communicating technical ideas, and reminded me of the importance of sharing knowledge. Beyond classes, what I enjoy most is applying what I've learned to real projects.",
 
-  'Me interesa especialmente el software libre, las herramientas que nos permiten aprender, modificar, experimentar. Linux ha sido un mundo fascinante para eso. Cada cambio en mi entorno es una forma de expresarme como desarrollador.',
+    "I'm passionate about Linux \u2014 I use Arch as my daily driver and customizing my environment is a form of expression. I'm also fascinated by open source, technical challenges like building a RayTracer in Rust or working with CUDA, and the intersection of software and hardware with Arduino and Raspberry Pi.",
 
-  'No sé exactamente a dónde me llevará este camino, pero sí sé que quiero seguir aprendiendo, compartiendo y creando. Y si mientras tanto puedo ayudar a alguien más, mucho mejor. Esto no es solo un diario: es una parte de quién soy.',
-];
+    "My goal is to keep growing as a developer, tackling complex problems and building solutions that matter. If something defines me, it's persistence: when something interests me, I study it until I master it. This portfolio is proof of that \u2014 a project that combines creativity, clean code, and the drive to do things differently.",
+  ],
+};
+
+export const getDiaryPages = (): string[] => diaryPagesData[i18n.current];
+
+// Backward compatibility
+export const diaryPages: string[] = diaryPagesData.es;

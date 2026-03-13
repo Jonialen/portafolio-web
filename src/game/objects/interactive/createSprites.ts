@@ -1,4 +1,5 @@
 import type { InteractiveObjectConfig } from '../../types/typesInteractive';
+import { DEPTH } from '../../config/constants';
 
 export function createSprites(config: InteractiveObjectConfig) {
   const {
@@ -15,7 +16,7 @@ export function createSprites(config: InteractiveObjectConfig) {
     .sprite(x, y, spriteKey)
     .setInteractive({ useHandCursor: true })
     .setScale(scale)
-    .setDepth(11)
+    .setDepth(DEPTH.sprite)
     .setScrollFactor(1)
     .setFlipX(flipX);
 
@@ -30,7 +31,7 @@ export function createSprites(config: InteractiveObjectConfig) {
       .setInteractive({ useHandCursor: true })
       .setScrollFactor(1)
       .setFlipX(flipX)
-      .setDepth(11);
+      .setDepth(DEPTH.sprite);
   }
 
   return { sprite, altSprite };

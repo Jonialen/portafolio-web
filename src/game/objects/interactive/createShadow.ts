@@ -1,3 +1,5 @@
+import { INTERACTIVE_OBJECT, DEPTH } from '../../config/constants';
+
 export function createShadow(
   scene: Phaser.Scene,
   x: number,
@@ -6,7 +8,7 @@ export function createShadow(
   height: number
 ) {
   return scene.add
-    .ellipse(x, y, width, height, 0x000000, 0.6)
-    .setDepth(10)
+    .ellipse(x, y, width, height, 0x000000, INTERACTIVE_OBJECT.shadow.opacity)
+    .setDepth(DEPTH.shadow)
     .setScrollFactor(1);
 }

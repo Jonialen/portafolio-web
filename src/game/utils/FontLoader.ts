@@ -1,69 +1,36 @@
 export class FontLoader {
   private static loadedFonts = new Set<string>();
+  private static readonly TIMEOUT_MS = 5000;
 
   static async loadGoogleFont(
     fontName: string,
-    scene: Phaser.Scene
+    _scene?: Phaser.Scene
   ): Promise<void> {
     if (this.loadedFonts.has(fontName)) {
-      return Promise.resolve();
+      return;
     }
 
-    return new Promise((resolve) => {
-      const link = document.createElement('link');
-      link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(' ', '+')}:wght@400;700&display=swap`;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
+    // Inject the Google Fonts stylesheet
+    const link = document.createElement('link');
+    link.href = `https://fonts.googleapis.com/css2?family=${fontName.replace(/ /g, '+')}:wght@400;700&display=swap`;
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
 
-      this.checkFontLoaded(fontName, scene, resolve);
-    });
-  }
+    // Wait for the font to load with a timeout fallback
+    try {
+      await Promise.race([
+        document.fonts.load(`24px "${fontName}"`),
+        new Promise<void>((_, reject) =>
+          setTimeout(
+            () => reject(new Error(`Font "${fontName}" load timed out`)),
+            this.TIMEOUT_MS
+          )
+        ),
+      ]);
+    } catch (error) {
+      console.warn(`[FontLoader] ${(error as Error).message}. Using fallback.`);
+    }
 
-  private static checkFontLoaded(
-    fontName: string,
-    scene: Phaser.Scene,
-    callback: () => void
-  ) {
-    const testElement = document.createElement('div');
-    testElement.style.fontFamily = `${fontName}, Arial`;
-    testElement.style.fontSize = '24px';
-    testElement.style.position = 'absolute';
-    testElement.style.left = '-9999px';
-    testElement.style.visibility = 'hidden';
-    testElement.textContent = 'Test Font Loading';
-    document.body.appendChild(testElement);
-
-    let attempts = 0;
-    const maxAttempts = 50;
-
-    const checkFont = () => {
-      attempts++;
-
-      const computedStyle = window.getComputedStyle(testElement);
-      const fontAvailable =
-        computedStyle.fontFamily.includes(fontName) ||
-        (document.fonts && document.fonts.check(`24px "${fontName}"`));
-
-      if (fontAvailable || attempts >= maxAttempts) {
-        document.body.removeChild(testElement);
-        this.loadedFonts.add(fontName);
-
-        if (fontAvailable) {
-          console.log(`Font ${fontName} loaded successfully`);
-        } else {
-          console.warn(`Font ${fontName} failed to load, using fallback`);
-        }
-
-        scene.time.delayedCall(100, callback);
-      } else {
-        scene.time.delayedCall(100, checkFont);
-      }
-    };
-
-    scene.time.delayedCall(300, checkFont);
-  }
-
-  static getFontFamily(fontName: string): string {
-    return `"${fontName}", cursive, Georgia, serif`;
+    this.loadedFonts.add(fontName);
   }
 }

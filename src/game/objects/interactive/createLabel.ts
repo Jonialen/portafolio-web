@@ -1,17 +1,22 @@
+import { INTERACTIVE_OBJECT, DEPTH } from '../../config/constants';
+
 export function createLabel(
   scene: Phaser.Scene,
   x: number,
   y: number,
   infoText: string
 ) {
+  const { offset, fontSize, color, backgroundColor, padding } =
+    INTERACTIVE_OBJECT.label;
+
   return scene.add
-    .text(x + 60, y - 20, infoText, {
-      fontSize: '24px',
+    .text(x + offset.x, y + offset.y, infoText, {
+      fontSize,
       fontFamily: 'Arial',
-      color: '#ffffff',
-      backgroundColor: '#000000aa',
-      padding: { x: 10, y: 5 },
+      color,
+      backgroundColor,
+      padding,
     })
     .setAlpha(0)
-    .setDepth(12);
+    .setDepth(DEPTH.label);
 }

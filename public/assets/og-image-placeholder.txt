@@ -1,0 +1,2 @@
+TODO: Replace with a 1200x630 screenshot of the camp scene.
+Save as public/assets/og-image.png

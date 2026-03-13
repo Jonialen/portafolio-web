@@ -1,9 +1,13 @@
+import { addBreathingAnimation } from '../utils/animationUtils';
+import { i18n } from '../i18n';
+
 export class DiaryBook {
   private scene: Phaser.Scene;
   private bookPage!: Phaser.GameObjects.Image;
   private diaryText!: Phaser.GameObjects.Text;
   private nextButton!: Phaser.GameObjects.Text;
   private prevButton!: Phaser.GameObjects.Text;
+  private pageIndicator!: Phaser.GameObjects.Text;
   private currentPageIndex: number = 0;
   private pages: string[];
   private scale!: number;
@@ -49,6 +53,7 @@ export class DiaryBook {
       .setDepth(10);
 
     this.createNavigationButtons();
+    this.createPageIndicator();
     this.createBreathingAnimation();
     this.setPage(0);
   }
@@ -121,16 +126,31 @@ export class DiaryBook {
     this.updateButtonVisibility();
   }
 
-  private createBreathingAnimation() {
-    this.respirationTween = this.scene.tweens.add({
-      targets: [this.bookPage],
-      scaleX: this.scale * 1.01,
-      scaleY: this.scale * 1.01,
-      duration: 2000,
-      yoyo: true,
-      repeat: -1,
-      ease: 'Sine.easeInOut',
+  private createPageIndicator() {
+    this.pageIndicator = this.scene.add
+      .text(this.bookPage.x, this.bookPage.y + 20, '', {
+        fontSize: '18px',
+        fontFamily: 'Arial, sans-serif',
+        color: '#ffffff',
+        backgroundColor: '#000000aa',
+        padding: { x: 12, y: 6 },
+      })
+      .setOrigin(0.5, 0)
+      .setDepth(10);
+
+    this.updatePageIndicator();
+  }
+
+  private updatePageIndicator() {
+    const text = i18n.format(i18n.t.ui.page, {
+      current: this.currentPageIndex + 1,
+      total: this.pages.length,
     });
+    this.pageIndicator.setText(text);
+  }
+
+  private createBreathingAnimation() {
+    this.respirationTween = addBreathingAnimation(this.scene, this.bookPage);
   }
 
   private updateButtonVisibility() {
@@ -155,6 +175,7 @@ export class DiaryBook {
           this.diaryText.setText(this.pages[index]);
           this.currentPageIndex = index;
           this.updateButtonVisibility();
+          this.updatePageIndicator();
 
           this.scene.tweens.add({
             targets: this.diaryText,
@@ -199,5 +220,6 @@ export class DiaryBook {
     this.diaryText?.destroy();
     this.nextButton?.destroy();
     this.prevButton?.destroy();
+    this.pageIndicator?.destroy();
   }
 }

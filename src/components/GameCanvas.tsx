@@ -34,5 +34,5 @@ export function GameCanvas() {
     };
   }, []);
 
-  return <div ref={ref} className="w-full h-full" />;
+  return <div ref={ref} style={{ width: '100%', height: '100%' }} />;
 }

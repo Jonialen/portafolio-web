@@ -18,10 +18,9 @@ Disponible en:
 
 ## 🛠️ Tecnologías
 
-- **Frontend**: React 19.1.0 + TypeScript
-- **Build Tool**: Vite 6.3.5
+- **Frontend**: React 19.2.3 + TypeScript
+- **Build Tool**: Vite 6.4.1
 - **Game Engine**: Phaser 3.90.0
-- **Animations**: GSAP 3.13.0
 
 ## 🚀 Instalación y Uso
 
